@@ -1,4 +1,4 @@
-<div align="center">
+Professorrofessordiv align="center">
 
 ## Dex mini bot 
 [![Made with Baileys](https://img.shields.io/badge/Made%20with-Baileys-00bcd4?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
@@ -216,7 +216,7 @@ You must:
 
 ## 📜 Copyright Notice
 
-Copyright (c) **2026 Professor**.  
+Copyright (c) **2026 SHYAM**.  
 All rights reserved.
 
 This project contains code from various open‑source projects and AI tools, including but not limited to:
