@@ -1,4 +1,5 @@
-DEX-SHYAM-HA4KR  align="center">
+DEX-SHYAM-HA4KR
+align="center">
 
 ## Dex mini bot 
 [![Made with Baileys](https://img.shields.io/badge/Made%20with-Baileys-00bcd4?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
