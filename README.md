@@ -1,5 +1,4 @@
-DEX-SHYAM-HA4KR
-align="center">
+<div align="center">
 
 ## Dex mini bot 
 [![Made with Baileys](https://img.shields.io/badge/Made%20with-Baileys-00bcd4?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
@@ -32,13 +31,13 @@ All commands and the overall structure are written in a way that makes customiza
 
 <div align="center">
 
-<a href="https://github.com/Dexsam07/Dex-mini-bot/fork" target="_blank">
+<a href="https://github.com/Dexsam07/Dex-Mini-bot/fork" target="_blank">
   <img src="https://img.shields.io/badge/Fork%20Repository-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="Fork on GitHub">
 </a>
 
 </div>
 
-> This creates your own copy of `Dex-mini-Bot` under your GitHub account.
+> This creates your own copy of `Dex-mini-bot` under your GitHub account.
 
 ---
 
@@ -48,7 +47,7 @@ Deploy a small helper to generate a **pair code** and obtain your session string
 
 <div align="center">
 
-<a href="https://dex-mini-bot-pair.onrender.com" target="_blank">
+<a href="https://dex-mini-bot-pair.onrender.com/" target="_blank">
   <img src="https://img.shields.io/badge/Generate-Pair%20Code-blueviolet?style=for-the-badge" alt="Generate Pair Code">
 </a>
 
@@ -57,13 +56,13 @@ Deploy a small helper to generate a **pair code** and obtain your session string
 After scanning, you will receive a **session string** starting with:
 
 ```text
-KnightBot!H4....
+DEXMINIBOT~H4....
 ```
 
 Copy that full string and paste it into `config.js`:
 
 ```js
-sessionID: 'KnightBot!H4.....'
+sessionID: 'DEXMINIBOT~H4.....'
 ```
 
 Or set it via the `SESSION_ID` environment variable when hosting.
@@ -95,8 +94,8 @@ For a full step‑by‑step deployment tutorial (panels / VPS / Heroku), add or 
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone [https://github.com/Dexsam07/Dex-mini-bot.git
-cd Dex-mini-bot
+git clone https://github.com/Dexsam07/Dex-mini-bot.git
+cd Dex-Mini-bot
 ```
 
 ### 2️⃣ Install dependencies
@@ -112,7 +111,7 @@ Edit `config.js`:
 - **Option A: Use session string**
 
   ```js
-  sessionID: 'KnightBot!H4.....'
+  sessionID: 'DEXMINIBOT~H4.....'
   ```
 
 - **Option B: Scan QR**
@@ -140,11 +139,11 @@ When the bot starts:
 
 <div align="center">
 
-<a href="https://t.me/+3QhFUZHx-nhhZmY1" target="_blank">
+<a href="https://t.me/Dexsam007" target="_blank">
   <img src="https://img.shields.io/badge/Join-Telegram-0088cc?style=for-the-badge&logo=telegram&logoColor=white" alt="Join Telegram">
 </a>
 
-<a href="https://whatsapp.com/channel/0029Va90zAnIHphOuO8Msp3A" target="_blank">
+<a href="https://whatsapp.com/channel/0029VbBgXTsKwqSKZKy38w2o" target="_blank">
   <img src="https://img.shields.io/badge/Join-WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Join WhatsApp Channel">
 </a>
 
@@ -154,7 +153,7 @@ When the bot starts:
 
 ## 🙏 Credits
 
-- **Mr Unique Hacker** – Main developer & maintainer  
+- **Dex Shyam Chaudhari** – Main developer & maintainer  
 - **Baileys** – WhatsApp Web API library (`@whiskeysockets/baileys`)  
 - Other open‑source libraries listed in `package.json`
 
@@ -164,7 +163,7 @@ When the bot starts:
 
 <div align="center">
 
-<a href="https://buymeacoffee.com/mruniquehacker" target="_blank">
+<a href="https://buymeacoffee.com/Dexsam07" target="_blank">
   <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support%20Developer-FF813F?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Buy Me a Coffee">
 </a>
 
@@ -217,7 +216,7 @@ You must:
 
 ## 📜 Copyright Notice
 
-Copyright (c) **2026 SHYAM**.  
+Copyright (c) **2026 DEX**.  
 All rights reserved.
 
 This project contains code from various open‑source projects and AI tools, including but not limited to:
