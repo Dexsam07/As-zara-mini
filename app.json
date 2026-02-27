@@ -1,5 +1,5 @@
 {
-  "name": "Knight Bot MD",
+  "name": "As-zara-mini",
   "description": "Advanced WhatsApp Multi-Device Bot with anti-call, group management, and extensible command system. Built on Baileys library.",
   "repository": "",
   "logo": "https://i.imgur.com/your-logo-url.png",
@@ -19,7 +19,7 @@
   ],
   "env": {
     "SESSION_ID": {
-      "description": "KnightBot session string. Format: KnightBot!<base64_compressed_data> (obtained from session generator). Leave empty for QR scan on first run.",
+      "description": "AS session string. Format: AS~!<base64_compressed_data> (obtained from session generator). Leave empty for QR scan on first run.",
       "required": false,
       "value": ""
     },
@@ -31,7 +31,7 @@
     "BOT_NAME": {
       "description": "Display name of your bot (shown in status and logs).",
       "required": true,
-      "value": "KnightBot"
+      "value": "AS-ZARA-MINI"
     },
     "OWNER_NAME": {
       "description": "Name(s) of the bot owner(s). For multiple owners, separate with commas (e.g., John,Jane).",
@@ -41,7 +41,7 @@
     "OWNER_NUMBER": {
       "description": "Phone number(s) of owner(s) with country code (without + or spaces). For multiple, separate with commas. Used for owner-only commands.",
       "required": true,
-      "value": "1234567890"
+      "value": "+917384287404"
     },
     "AUTO_READ": {
       "description": "Automatically mark messages as read in groups (true/false).",

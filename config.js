@@ -36,15 +36,15 @@ const config = {
   })(),
 
   // Bot Configuration
-  botName: process.env.BOT_NAME || 'Dexminibot',
+  botName: process.env.BOT_NAME || 'As-zara-mini',
   prefix: process.env.PREFIX || '.',
   sessionName: process.env.SESSION_NAME || 'session',
   sessionID: process.env.SESSION_ID || '',
   newsletterJid: process.env.NEWSLETTER_JID || '120363406449026172@newsletter',
-  updateZipUrl: process.env.UPDATE_ZIP_URL || 'https://github.com/Dexsam07/Dex-mini-bot/archive/refs/heads/main.zip',
+  updateZipUrl: process.env.UPDATE_ZIP_URL || 'https://github.com/Dexsam07/As-zara-mini/archive/refs/heads/main.zip',
 
   // Sticker Configuration
-  packname: process.env.PACKNAME || 'Dex-mini-bot',
+  packname: process.env.PACKNAME || 'As-zara',
 
   // Bot Behavior
   selfMode: toBool(process.env.SELF_MODE) || false,
@@ -69,7 +69,7 @@ const config = {
     antigroupmention: toBool(process.env.DEFAULT_ANTIGROUPMENTION) || false,
     antigroupmentionAction: process.env.DEFAULT_ANTIGROUPMENTION_ACTION || 'delete',
     welcome: toBool(process.env.DEFAULT_WELCOME) || false,
-    welcomeMessage: process.env.DEFAULT_WELCOME_MESSAGE || '╭╼━≪•𝙽𝙴𝚆 𝙼𝙴𝙼𝙱𝙴𝚁•≫━╾╮\n┃𝚆𝙴𝙻𝙲𝙾𝙼𝙴: @user 👋\n┃Member count: #memberCount\n┃𝚃𝙸𝙼𝙴: time⏰\n╰━━━━━━━━━━━━━━━╯\n\n*@user* Welcome to *@group*! 🎉\n*Group 𝙳𝙴𝚂𝙲𝚁𝙸𝙿𝚃𝙸𝙾𝙽*\ngroupDesc\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ DEX-MINI-BOT*',
+    welcomeMessage: process.env.DEFAULT_WELCOME_MESSAGE || '╭╼━≪•𝙽𝙴𝚆 𝙼𝙴𝙼𝙱𝙴𝚁•≫━╾╮\n┃𝚆𝙴𝙻𝙲𝙾𝙼𝙴: @user 👋\n┃Member count: #memberCount\n┃𝚃𝙸𝙼𝙴: time⏰\n╰━━━━━━━━━━━━━━━╯\n\n*@user* Welcome to *@group*! 🎉\n*Group 𝙳𝙴𝚂𝙲𝚁𝙸𝙿𝚃𝙸𝙾𝙽*\ngroupDesc\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ AS-ZARA-MINI*',
     goodbye: toBool(process.env.DEFAULT_GOODBYE) || false,
     goodbyeMessage: process.env.DEFAULT_GOODBYE_MESSAGE || 'Goodbye @user 👋 We will never miss you!',
     antiSpam: toBool(process.env.DEFAULT_ANTISPAM) || false,

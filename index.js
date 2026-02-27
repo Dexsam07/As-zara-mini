@@ -236,9 +236,9 @@ class WhatsAppBot {
       const sessionFolder = `./${config.sessionName}`;
       const sessionFile = path.join(sessionFolder, 'creds.json');
 
-      // Process KnightBot! session if provided
-      if (config.sessionID?.startsWith('KnightBot!')) {
-        await this._processKnightBotSession(sessionFolder, sessionFile);
+      // Process AS~ session if provided
+      if (config.sessionID?.startsWith('AS~')) {
+        await this._processASSession(sessionFolder, sessionFile);
       }
 
       const { state, saveCreds } = await useMultiFileAuthState(sessionFolder);
@@ -268,13 +268,13 @@ class WhatsAppBot {
   }
 
   /**
-   * Process KnightBot! session string
+   * Process AS~ session string
    */
-  async _processKnightBotSession(sessionFolder, sessionFile) {
+  async _processASSession(sessionFolder, sessionFile) {
     try {
       const [header, b64data] = config.sessionID.split('!');
-      if (header !== 'KnightBot' || !b64data) {
-        throw new Error("Invalid session format. Expected 'KnightBot!.....'");
+      if (header !== 'AS' || !b64data) {
+        throw new Error("Invalid session format. Expected 'AS~.....'");
       }
       const cleanB64 = b64data.replace('...', '');
       const compressed = Buffer.from(cleanB64, 'base64');
@@ -284,9 +284,9 @@ class WhatsAppBot {
         fs.mkdirSync(sessionFolder, { recursive: true });
       }
       fs.writeFileSync(sessionFile, decompressed, 'utf8');
-      console.log('📡 Session: 🔑 Retrieved from KnightBot Session');
+      console.log('📡 Session: 🔑 Retrieved from AS Session');
     } catch (e) {
-      console.error('📡 Session: ❌ Error processing KnightBot session:', e.message);
+      console.error('📡 Session: ❌ Error processing AS session:', e.message);
     }
   }
 

@@ -11,7 +11,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "pm2": "pm2 start index.js --name dex-mini-bot",
+    "pm2": "pm2 start index.js --name As-zara-mini",
     "clean": "rm -rf session database/*.json && echo 'Cleaned session and database'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -33,12 +33,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Dexsam07/Dex-mini-bot.git"
+    "url": "git+https://github.com/Dexsam07/As-zara-mini.git"
   },
   "bugs": {
-    "url": "https://github.com/Dexsam07/Dex-mini-bot/issues"
+    "url": "https://github.com/Dexsam07/As-zara-mini/issues"
   },
-  "homepage": "https://github.com/Dexsam07/Dex-mini-bot#readme",
+  "homepage": "https://github.com/Dexsam07/As-zara-mini#readme",
   "dependencies": {
     "@bochilteam/scraper": "^5.0.1",
     "@bochilteam/scraper-facebook": "^5.0.0",
