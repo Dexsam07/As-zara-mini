@@ -16,7 +16,7 @@
 
 ## 📖 Overview
 
-**Dex Mini Bot** is a powerful, lightweight WhatsApp Multi-Device bot built on the **Baileys** library. Designed for flexibility and ease of use, it allows you to create your own customized WhatsApp bot **without any cost**. The entire codebase is open-source, giving you full control to modify, rebrand, and deploy it anywhere – whether on a VPS, cloud panel, or your local machine.
+**AS-ZARA-MINI** is a powerful, lightweight WhatsApp Multi-Device bot built on the **Baileys** library. Designed for flexibility and ease of use, it allows you to create your own customized WhatsApp bot **without any cost**. The entire codebase is open-source, giving you full control to modify, rebrand, and deploy it anywhere – whether on a VPS, cloud panel, or your local machine.
 
 > ⚠️ **Disclaimer:** This is an unofficial bot. Use at your own risk. See [Legal](#-legal) section for details.
 
@@ -164,7 +164,7 @@ https://img.shields.io/badge/Report%20Issues-GitHub-181717?style=for-the-badge&l
 
 📚 Commands Overview
 
-Dex Mini Bot comes with a rich set of commands. Type .menu in WhatsApp to see the full list. Below are some highlights:
+As-zara-mini comes with a rich set of commands. Type .menu in WhatsApp to see the full list. Below are some highlights:
 
 Category Commands Description
 General .menu, .ping, .runtime Bot info and status
@@ -179,7 +179,7 @@ Owner .restart, .update, .setpp Bot control and customization
 
 🤝 Contributing
 
-We welcome contributions! If you'd like to improve Dex Mini Bot:
+We welcome contributions! If you'd like to improve As-zara-mini:
 
 1. Fork the repository.
 2. Create a new branch (git checkout -b feature/amazing-feature).
