@@ -1,103 +1,130 @@
-<div align="center">
+![WELLCOME](utils/wellcome.svg)
   
-# 🤖 AS-ZARA-MINI  
-WhatsApp Multi-Device Bot
+______
 
-[![Made with Baileys](https://img.shields.io/badge/Made%20with-Baileys-00bcd4?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/WhiskeySockets/Baileys)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![AS-ZARA-MINI](https://raw.githubusercontent.com/Dexsam07/As-zara-mini/main/utils/mr.svg)](https://whatsapp.com/channel/0029VbBgXTsKwqSKZKy38w2o)
+___ 
 
-<img src="utils/bot_image.jpg" alt="AS-ZARA-MINI Logo" width="260">
+<p align="center">
+  <a href="https://github.com/Dexsam07" target="_blank">
+    <img src="./utils/dev-gold-mini.svg" width="300" alt="Developer — Dex Shyam Chaudhari (Gold 3D)">
+  </a>
+</p>
 
-</div>
-
----
-
-## 📖 Overview
-
-**AS-ZARA-MINI** is a powerful, lightweight WhatsApp Multi-Device bot built on the **Baileys** library. Designed for flexibility and ease of use, it allows you to create your own customized WhatsApp bot **without any cost**. The entire codebase is open‑source, giving you full control to modify, rebrand, and deploy it anywhere – whether on a VPS, cloud panel, or your local machine.
-
-> ⚠️ **Important Disclaimer:** This is an **unofficial** bot. Using it may violate WhatsApp's Terms of Service. The developers are **not responsible** for any account restrictions or bans. Use at your own risk. See the [Legal](#-legal) section for full details.
-
----
-
-## 📑 Table of Contents
-
-- [✨ Features](#-features)
-- [🚀 Quick Start](#-quick-start)
-- [🛠 Local Setup](#-local-setup)
-- [☁️ Deployment Guides](#️-deployment-guides)
-- [🌐 Community & Support](#-community--support)
-- [📚 Commands Overview](#-commands-overview)
-- [🤝 Contributing](#-contributing)
-- [📝 License & Legal](#-license--legal)
-- [🙏 Credits](#-credits)
-
----
-
-## ✨ Features
-
-- **100% Open Source** – No hidden code; customize everything.
-- **Easy Customization** – Change bot image, prefix, name, newsletter, and more via simple commands.
-- **Modular Command System** – Commands are neatly organized in the `commands/` folder.
-- **Memory Optimized** – Efficient media handling with temporary file cleanup.
-- **Owner Utilities** – Built‑in commands to restart, update from ZIP, and manage the bot.
-- **Group Management** – Anti‑link, welcome/goodbye, anti‑tag, and more.
-- **Auto Features** – Auto‑read, auto‑react, auto‑sticker, and auto‑bio.
-- **Multi‑Platform Ready** – Works on Heroku, Koyeb, Render, panels, VPS, and local machines.
-
----
-
-## 🚀 Quick Start
-
-Get your bot up and running in minutes with these simple steps.
-
-### 1. Fork the Repository
-
-Create your own copy of **AS-ZARA-MINI** by forking on GitHub (update URL when you make repo public).
-
-<div align="center">
   
-[![Fork on GitHub](https://img.shields.io/badge/Fork%20Repository-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/new) <!-- placeholder until real repo -->
+<p align="center">
+  <a href="https://whatsapp.com/channel/0029VbBgXTsKwqSKZKy38w2o" target="_blank">
+    <img src="./utils/channel-update.svg" width="350" alt="Bot Updating — WhatsApp Channel | Join Fast">
+  </a>
+</p>
 
-</div>
+---------
 
-### 2. Obtain Your Session String
+<p align="center">
+<a href="https://github.com/Dexsam07/As-zara-mini"><img title="PUBLIC-BOT" src="https://img.shields.io/static/v1?label=Language&message=JavaScript&style=square&color=darkpink"></a> &nbsp;
+  <img src="https://komarev.com/ghpvc/?username=Dexsam07&label=VIEWS&style=square&color=blue" />
+</p>
 
-Use the official pair code generator:
+
+-------------
+
+<p align="center">
+<img src="utils/feature-bot.svg" alt="Feature Bot" width="900"/>
+  
+<p align="center">
+<img src="utils/license.svg" alt="License" width="200"/>
+
+--------------
+
+<p align="center">
+<img src="utils/maintenance.svg" alt="Maintenance" width="120"/>
+
+
+ <p align="center">
+  <a href="https://github.com/Dexsam07/As-zara-mini/fork" target="_blank">
+    <img src="utils/forkstar-holo.svg" width="180" alt="Fork Star Bot Repo"/>
+  </a>
+</p>
+
+
+<p align="center">
+  <a href="https://as-zara.zone.id/" target="_blank">
+    <img src="./utils/paircode-link.svg" width="195" alt="PAIR_CODE – Device Session ID">
+  </a>
+</p>
+
+-------------
+
+<p align="center">
+  <img src="./utils/deployment.svg" width="600" alt="AS-ZARA-MINI — News Ticker Typing">
+</p>
 
 <div align="center">
-  
-[![Generate Pair Code](https://img.shields.io/badge/Generate-Pair%20Code-blueviolet?style=for-the-badge)](https://as-zara.zone.id/)
-
+  <table>
+    <tr>
+      <td><a href="https://dashboard.heroku.com/new-app?template=https://github.com/Dexsam07/As-zara-mini" target="_blank"><img src="https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white&labelColor=000000&color=0000FF"/></a></td>
+      <td><a href="https://bot-hosting.net/?aff=1335487206948864030" target="_blank"><img src="https://img.shields.io/badge/Bot-Hosting-A52A2A?style=for-the-badge&logo=firefoxbrowser&logoColor=white&labelColor=000000"/></a></td>
+    </tr>
+    <tr>
+      <td><a href="https://app.koyeb.com/deploy?name=as-zara-mini-v6-koyeb&type=git&repository=Dexsam07%2FAs-zara-mini&branch=main&builder=dockerfile&instance_type=free&regions&=was&env%5BSESSION_ID%5D=" target="_blank"><img src="https://img.shields.io/badge/KOYEB-APP-FF009D?style=for-the-badge&logo=koyeb&logoColor=white&labelColor=000000"/></a></td>
+      <td><a href="https://railway.app/new" target="_blank"><img src="https://img.shields.io/badge/Railway-000080?style=for-the-badge&logo=railway&logoColor=white&labelColor=000000"/></a></td>
+    </tr>
+    <tr>
+      <td><a href="https://dashboard.katabump.com/auth/login#3c8183" target="_blank"><img src="https://img.shields.io/badge/KataBump-000000?style=for-the-badge&logo=render&logoColor=white&labelColor=000000&color=FFFF00"/></a></td>
+      <td><a href="https://www.smd-host.site/" target="_blank"><img src="https://img.shields.io/badge/Free-host-CC00FF?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=000000"/></a></td>
+    </tr>
+  </table>
 </div>
 
-After scanning, you will receive a session string starting with `AS~...`.  
-Store it **securely** and **never commit it** to any public repository.
+<table align="center">
+  <tr>
+    <td>
+      <a href="https://dashboard.render.com/" target="_blank">
+        <img alt="Deploy on Render" src="https://img.shields.io/badge/Deploy%20on%20Render-46E3B7?style=for-the-badge&logo=render&logoColor=white"/>
+      </a>
+    </td>
+  </tr>
+</table>  
 
-#### How to Use Your Session
+-------------
 
-- **Option 1:** Set it as env var `SESSION_ID` on hosting.
-- **Option 2:** Paste into `config.js` (local only, never push).
+**_✠ FREE DEPLOYMENT OF AS-ZARA-MINI GITHUB WORKFLOW CODE NEW ADD ERROR FIXED ✠_**
 
-```js
-sessionID: process.env.SESSION_ID || '',
-🛠 Local Setup
-git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git
-cd YOUR-REPO
-npm install
-# add SESSION_ID=AS~.... to .env
-node index.js
-☁️ Deployment Guides
-Katabump (link missing — add real guide if available)
-Heroku (general guide)
-Render (general guide)
-▶️ Video Tutorial
-https://www.youtube.com/watch?v=Hmp17yyU9Xc
-🌐 Community & Support
-WhatsApp Channel: https://whatsapp.com/channel/0029VbBgXTsKwqSKZKy38w2o
-WhatsApp Group: https://chat.whatsapp.com/IOEbmfzOD6d9TCjdX5Fi3B
-Report Issues: GitHub Issues (once repo is public)
-(remaining sections like Commands Overview, Contributing, License & Legal, Credits, Support the Developer are unchanged from your original — keep them as-is)
-�
-Made with ❤️ by Dex Shyam Chaudhari © 2026 DEX. All rights reserved. 
+```yaml
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [24.x]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        check-latest: true
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project (optional)
+      run: npm run build || echo "No build script found, skipping..."
+
+    - name: Start application
+      run: npm start
