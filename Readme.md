@@ -1,4 +1,3 @@
-```markdown
 <div align="center">
   
 # 🤖 Dex Mini Bot – WhatsApp Multi-Device Bot
