@@ -1,7 +1,7 @@
 <div align="center">
   
 # 🤖 AS-ZARA-MINI 
-– WhatsApp Multi-Device Bot
+ WhatsApp Multi-Device Bot
 
 [![Made with Baileys](https://img.shields.io/badge/Made%20with-Baileys-00bcd4?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/WhiskeySockets/Baileys)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
