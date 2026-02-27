@@ -1,7 +1,7 @@
 <div align="center">
   
 # 🤖 AS-ZARA-MINI 
- WhatsApp Multi-Device Bot
+WhatsApp Multi-Device Bot
 
 [![Made with Baileys](https://img.shields.io/badge/Made%20with-Baileys-00bcd4?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/WhiskeySockets/Baileys)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
@@ -146,7 +146,7 @@ For a complete walkthrough, watch our official YouTube tutorial:
 
 <div align="center">
 
-[https://img.shields.io/badge/Watch%20Tutorial-FF0000?style=for-the-badge&logo=youtube&logoColor=white](https://www.youtube.com/watch?v=Hmp17yyU9Xc)
+https://img.shields.io/badge/Watch%20Tutorial-FF0000?style=for-the-badge&logo=youtube&logoColor=white
 
 </div>
 
@@ -241,7 +241,6 @@ https://img.shields.io/badge/Support-Developer-FF813F?style=for-the-badge&logo=b
 <div align="center">
 
 Made with ❤️ by Dex Shyam Chaudhari
-
 © 2026 DEX. All rights reserved.
 
 </div>
