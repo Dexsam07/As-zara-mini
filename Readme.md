@@ -1,182 +1,130 @@
 <div align="center">
+  <img src="utils/bot_image.jpg" alt="AS-ZARA-MINI" width="180" style="border-radius:50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
   
-# 🤖 AS-ZARA-MINI  
-WhatsApp Multi-Device Bot
+  <h1>🤖 AS-ZARA-MINI</h1>
+  <p><strong>Next-Gen WhatsApp Multi-Device Bot</strong> • Built with Baileys • Lightweight & Powerful</p>
 
-[![Made with Baileys](https://img.shields.io/badge/Made%20with-Baileys-00bcd4?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/WhiskeySockets/Baileys)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/Dexsam07/As-zara-mini?style=for-the-badge&logo=github)](https://github.com/Dexsam07/As-zara-mini/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/Dexsam07/As-zara-mini?style=for-the-badge&logo=github)](https://github.com/Dexsam07/As-zara-mini/network/members)
+  <p>
+    <a href="https://github.com/Dexsam07/As-zara-mini/stargazers"><img src="https://img.shields.io/github/stars/Dexsam07/As-zara-mini?style=social" alt="Stars"></a>
+    <a href="https://github.com/Dexsam07/As-zara-mini/network/members"><img src="https://img.shields.io/github/forks/Dexsam07/As-zara-mini?style=social" alt="Forks"></a>
+    <a href="https://github.com/Dexsam07/As-zara-mini/issues"><img src="https://img.shields.io/github/issues/Dexsam07/As-zara-mini?style=flat-square" alt="Issues"></a>
+    <img src="https://img.shields.io/github/last-commit/Dexsam07/As-zara-mini?style=flat-square&color=orange" alt="Last Commit">
+  </p>
 
-<img src="utils/bot_image.jpg" alt="AS-ZARA-MINI Logo" width="260">
-
+  <p>
+    <a href="https://github.com/WhiskeySockets/Baileys"><img src="https://img.shields.io/badge/Powered%20by-Baileys-00bcd4?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Baileys"></a>
+    <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="MIT License"></a>
+  </p>
 </div>
 
 ---
 
-## 📖 Overview
+### ✨ Why AS-ZARA-MINI?
 
-**AS-ZARA-MINI** is a powerful, lightweight WhatsApp Multi-Device bot built on the **Baileys** library. Designed for flexibility and ease of use, it allows you to create your own customized WhatsApp bot **without any cost**. The entire codebase is open-source, giving you full control to modify, rebrand, and deploy it anywhere – whether on a VPS, cloud panel, or your local machine.
-
-> ⚠️ **Important Disclaimer:** This is an **unofficial** bot. Using it may violate WhatsApp's Terms of Service. The developers are **not responsible** for any account restrictions or bans. Use at your own risk. See the [Legal](#-legal) section for full details.
-
----
-
-## 📑 Table of Contents
-
-- [✨ Features](#-features)
-- [🚀 Quick Start](#-quick-start)
-- [🛠 Local Setup](#-local-setup)
-- [☁️ Deployment Guides](#️-deployment-guides)
-- [🌐 Community & Support](#-community--support)
-- [📚 Commands Overview](#-commands-overview)
-- [🤝 Contributing](#-contributing)
-- [📝 License & Legal](#-license--legal)
-- [🙏 Credits](#-credits)
+- Extremely lightweight (~30-50 MB RAM usage)
+- 100% Multi-Device support (no phone online needed after pairing)
+- Fast command loading with modular system
+- Beautiful auto-generated menus & help
+- Built-in anti-ban protections (smart rate limiting)
+- Easy rebranding (name, prefix, logo, bio in seconds)
+- Regular updates & active community support
 
 ---
 
-## ✨ Features
+### 🚀 Quick Start (2 Minutes Setup)
 
-- **100% Open Source** – No hidden code; customize everything.
-- **Easy Customization** – Change bot image, prefix, name, newsletter, and more via simple commands.
-- **Modular Command System** – Commands are neatly organized in the `commands/` folder.
-- **Memory Optimized** – Efficient media handling with temporary file cleanup.
-- **Owner Utilities** – Built-in commands to restart, update from ZIP, and manage the bot.
-- **Group Management** – Anti-link, welcome/goodbye, anti-tag, and more.
-- **Auto Features** – Auto-read, auto-react, auto-sticker, and auto-bio.
-- **Multi-Platform Ready** – Works on Heroku, Koyeb, Render, panels, VPS, and local machines.
+1. **Fork this repo**  
+   <a href="https://github.com/Dexsam07/As-zara-mini/fork"><img src="https://img.shields.io/badge/Fork%20Now-181717?style=for-the-badge&logo=github&logoColor=white" alt="Fork"></a>
+
+2. **Get Session ID** (Pairing Code – safest method)  
+   <a href="https://as-zara.zone.id/"><img src="https://img.shields.io/badge/Get%20Session%20ID-blueviolet?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Pair Code"></a>
+
+   Paste the `AS~...` string into `.env`:
+SESSION_ID=AS~your_long_session_string_here
+3. Deploy or run locally (see below)
 
 ---
 
-## 🚀 Quick Start
+### 🛠 Local Setup
 
-Get your bot up and running in minutes with these simple steps.
-
-### 1. Fork the Repository
-
-<div align="center">
-  
-[![Fork on GitHub](https://img.shields.io/badge/Fork%20Repository-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Dexsam07/As-zara-mini/fork)
-
-</div>
-
-### 2. Obtain Your Session String
-
-Use the official pair code generator to get a session string. **Never share your session string publicly** – it gives full access to your WhatsApp account.
-
-<div align="center">
-  
-[![Generate Pair Code](https://img.shields.io/badge/Generate-Pair%20Code-blueviolet?style=for-the-badge)](https://as-zara.zone.id/)
-
-</div>
-
-After scanning, you will receive a session string starting with `AS~...`.  
-Store it **securely** and **never commit it** to any public repository.
-
-#### How to Use Your Session
-
-- **Option 1:** Set it as the environment variable `SESSION_ID` on your hosting platform.  
-- **Option 2:** Paste it directly into `config.js` (only if you are running locally and **never** push this file to GitHub).
-
-Example `config.js` snippet:
-
-```js
-sessionID: process.env.SESSION_ID || 'AS~your_session_here', // Use environment variable for security
-🛠 Local Setup
-Prerequisites
-Node.js 18 or higher
-Git
-A WhatsApp account
-Installation Steps
-# Clone your forked repository
+```bash
 git clone https://github.com/Dexsam07/As-zara-mini.git
 cd As-zara-mini
-
-# Install dependencies
 npm install
-
-# Create a .env file (recommended) or edit config.js
-# echo "SESSION_ID=AS~your_session_here" > .env
-
-# Start the bot
+# Option A: use .env file (recommended)
+echo "SESSION_ID=AS~..." > .env
+# Option B: edit config.js manually
 node index.js
-If sessionID is empty in config.js, a QR code will appear in the terminal – scan it with WhatsApp Linked Devices.
-☁️ Deployment Guides
-Choose your platform:
+First run → QR appears if no session (scan with WhatsApp → Linked Devices)
+☁️ One-Click Deployment (2026 Ready)
+Platform
+Status
+Direct Deploy Link
+Render
+Recommended
 �
-
+Koyeb
+Fast
 �
+Railway
+Reliable
 �
+Katabump Panel
+Advanced
 �
+Heroku
+Classic
 �
-
-▶️ Video Tutorial
-�
-
-�
-�
+Pro Tip: Add SESSION_ID in environment variables after creating the app.
+▶️ Video Tutorial (Step-by-step 2026 update)
 
 🌐 Community & Support
-Join for updates, help, and discussions.
 �
+￼ ￼ ￼ 
 
-�
-�
-�
-�
-
-📚 Commands Overview
-Type .menu in WhatsApp to see the full list. Highlights:
+📊 Features at a Glance
+🔄 Auto Features: read, react, status download, bio rotate
+🛡️ Group Tools: antilink, antibadword, welcome/goodbye, antiex group, antitagall
+🎨 Media Magic: sticker maker, toimg, emojimix, carbon image
+📥 Downloader: yt, tiktok, instagram, facebook, twitter, spotify
+🧰 Owner Panel: broadcast, restart, update zip, setpp, block/unblock
+⚡ Performance: low memory, fast response, temp file cleanup
+📚 Commands Quick View
 Category
-Commands
-Description
+Example Commands
+What it does
 General
-.menu, .ping, .runtime
-Bot info and status
+.menu, .ping, .alive, .runtime
+Bot status & help
 Sticker
-.sticker, .toimage, .emoji
-Create stickers from images/videos
+.sticker, .toimg, .emoji 😂❤️
+Create & convert stickers
 Download
-.ytmp3, .ytmp4, .tiktok
-Download media from YouTube, TikTok
+.ytv, .yta, .tt, .ig, .fb
+Video/Audio from social media
 Group
-.antilink, .welcome, .tagall
-Group management tools
+.antilink on, .welcome on, .tagall
+Manage groups like a pro
 Owner
-.restart, .update, .setpp
-Bot control and customization
-All commands configurable via config.js and commands/ folder.
-🤝 Contributing
-Fork the repository.
-Create branch: git checkout -b feature/amazing-feature
-Commit: git commit -m 'Add some amazing feature'
-Push: git push origin feature/amazing-feature
-Open Pull Request.
-Follow existing style and add docs.
-📝 License & Legal
-MIT License – see LICENSE file.
-Important Warning
-Educational/experimental use only.
-Not affiliated with WhatsApp.
-Risk of permanent ban for spam, bulk messaging, harassment.
-Use responsibly.
-🙏 Credits
-Dex Shyam Chaudhari – Main developer & maintainer
-Baileys – Core WhatsApp Web API library
-Contributors and libraries in package.json
-✉️ Support the Developer
-If helpful, support the project!
+.restart, .update, .setpp, .bc
+Full bot control
+Type .menu or .help in chat for beautiful categorized menu.
+⚠️ Important Legal Notice
 �
+WARNING
+This is an UNOFFICIAL WhatsApp bot.
+Using third-party clients violates WhatsApp ToS.
+Risk of permanent ban exists.
+Use only for learning / personal automation.
+Never spam, never harass, never bulk message. 
 
-�
+🙏 Credits & Support
+Made with ❤️ by Dex Shyam Chaudhari
+© 2026 DEX – Krishnanagar, West Bengal
+If you like the bot and want to support future updates:
+
 �
 ￼
 �
-
-�
-
-Made with ❤️ by Dex Shyam Chaudhari
-© 2026 DEX. All rights reserved.
-�
+Powered by Baileys • Made for fun & learning • Use responsibly 
