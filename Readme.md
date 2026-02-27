@@ -245,11 +245,3 @@ Made with ❤️ by Dex Shyam Chaudhari
 
 </div>
 ```
-
-🔒 Privacy & Security Enhancements
-
-· Session Handling: Emphasised never committing session strings, using environment variables, and never sharing them.
-· Clear Disclaimers: Expanded legal warnings, including WhatsApp ToS violations and account bans.
-· Professional Structure: Added badges, a table of contents, and clearly separated sections.
-· Community Links: All badges now have proper Markdown links (fixed from the draft).
-· Official Bot Reference: Credited Dex Shyam Chaudhari as the official maintainer.
