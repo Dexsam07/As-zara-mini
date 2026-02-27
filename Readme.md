@@ -1,14 +1,14 @@
 <div align="center">
   
-# 🤖 Dex Mini Bot – WhatsApp Multi-Device Bot
+# 🤖 AS-ZARA-MINI – WhatsApp Multi-Device Bot
 
 [![Made with Baileys](https://img.shields.io/badge/Made%20with-Baileys-00bcd4?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/WhiskeySockets/Baileys)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/Dexsam07/Dex-Mini-bot?style=for-the-badge&logo=github)](https://github.com/Dexsam07/Dex-Mini-bot/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/Dexsam07/Dex-Mini-bot?style=for-the-badge&logo=github)](https://github.com/Dexsam07/Dex-Mini-bot/network/members)
+[![GitHub Stars](https://img.shields.io/github/stars/Dexsam07/As-zara-mini?style=for-the-badge&logo=github)](https://github.com/Dexsam07/As-zara-mini/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/Dexsam07/As-zara-mini?style=for-the-badge&logo=github)](https://github.com/Dexsam07/As-zara-mini/network/members)
 
-<img src="utils/bot_image.jpg" alt="Dex Mini Bot Logo" width="260">
+<img src="utils/bot_image.jpg" alt="As-zara-mini Logo" width="260">
 
 </div>
 
@@ -42,7 +42,6 @@
 - **Easy Customization** – Change bot image, prefix, name, newsletter, and more via simple commands.
 - **Modular Command System** – Commands are neatly organized in the `commands/` folder.
 - **Memory Optimized** – Efficient media handling with temporary file cleanup.
-- **Session Persistence** – Use session strings (e.g., `DEXMINIBOT~...`) for quick logins.
 - **Owner Utilities** – Built-in commands to restart, update from ZIP, and manage the bot.
 - **Group Management** – Anti-link, welcome/goodbye, anti-tag, and more.
 - **Auto Features** – Auto-read, auto-react, auto-sticker, and auto-bio.
@@ -56,11 +55,11 @@ Get your bot up and running in minutes with these two simple steps.
 
 ### 1. Fork the Repository
 
-Create your own copy of Dex Mini Bot by forking on GitHub.
+Create your own copy of AS-ZARA-MINI by forking on GitHub.
 
 <div align="center">
   
-[![Fork on GitHub](https://img.shields.io/badge/Fork%20Repository-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Dexsam07/Dex-Mini-bot/fork)
+[![Fork on GitHub](https://img.shields.io/badge/Fork%20Repository-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Dexsam07/As-zara-mini/fork)
 
 </div>
 
@@ -70,14 +69,14 @@ Use the pair code generator to get a session string. Scan the QR code with your 
 
 <div align="center">
   
-[![Generate Pair Code](https://img.shields.io/badge/Generate-Pair%20Code-blueviolet?style=for-the-badge)](https://dex-mini-bot-pair.onrender.com/)
+[![Generate Pair Code](https://img.shields.io/badge/Generate-Pair%20Code-blueviolet?style=for-the-badge)](https://as-zara.zone.id/)
 
 </div>
 
 Paste the session string into `config.js`:
 
 ```js
-sessionID: 'DEXMINIBOT~H4.....'
+sessionID: 'AS~H4.....'
 ```
 
 Or set it as the environment variable SESSION_ID on your hosting platform.
@@ -102,8 +101,8 @@ Installation Steps
 
 ```bash
 # Clone your forked repository
-git clone https://github.com/your-username/Dex-Mini-bot.git
-cd Dex-Mini-bot
+git clone https://github.com/Dexsam07/As-zara-mini.git
+cd As-zara-mini
 
 # Install dependencies
 npm install
@@ -201,9 +200,6 @@ This project is licensed under the MIT License – see the LICENSE file for deta
 Important Warning
 
 · Educational Purpose Only – This bot is created for learning and experimentation.
-· Not Official – Dex Mini Bot is not affiliated, authorized, or endorsed by WhatsApp Inc.
-· Account Safety – Using third‑party bots may violate WhatsApp's Terms of Service and could lead to a permanent ban. Use at your own risk.
-· No Liability – The developers assume no responsibility for any bans, data loss, or damages caused by using this software.
 
 Usage Guidelines
 
@@ -220,16 +216,15 @@ Usage Guidelines
 · All contributors and open‑source libraries listed in package.json
 
 ---
+ Support the Developer
 
-☕ Support the Developer
-
-If you find this project helpful and would like to support its development, consider buying me a coffee!
+If you find this project helpful and would like to support its development, consider buying me a bots!
 
 <div align="center">
 
-https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support-FF813F?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white
+https://dex-shyam-ha4kr.page.gd
 
-<img src="utils/bmc_qr.png" alt="Buy Me a Coffee QR Code" width="200">
+<img src="utils/bmc_qr.png" alt="Buy Me a bot QR Code" width="200">
 
 </div>
 
