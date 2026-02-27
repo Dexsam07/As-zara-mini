@@ -241,7 +241,7 @@ https://img.shields.io/badge/Support-Developer-FF813F?style=for-the-badge&logo=b
 <div align="center">
 
 Made with ❤️ by Dex Shyam Chaudhari
+
 © 2026 DEX. All rights reserved.
 
 </div>
-```
