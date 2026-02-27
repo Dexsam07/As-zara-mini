@@ -1,519 +1,587 @@
 /**
- * WhatsApp mini Bot - Main Entry Point
+ * WhatsApp MD Bot - Professional Main Entry Point
+ * @module index
  */
-// CRITICAL: Prevent Puppeteer/Chromium downloads BEFORE any npm install or library loads
-// Set these environment variables FIRST to prevent any browser downloads
+
+'use strict';
+
+// ==================== Environment Setup ====================
 process.env.PUPPETEER_SKIP_DOWNLOAD = 'true';
 process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = 'true';
 process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer_cache_disabled';
 
-// CRITICAL: Initialize temp system BEFORE any libraries that use temp directories
-// This must happen before Baileys, ffmpeg, or any other library loads
-const { initializeTempSystem } = require('./utils/tempManager');
-const { startCleanup } = require('./utils/cleanup');
-// Initialize temp directory and set environment variables
+const { initializeTempSystem, cleanupTempFiles } = require('./utils/tempManager');
+const { startCleanup, cleanupOldFiles } = require('./utils/cleanup');
 initializeTempSystem();
-// Start cleanup system (runs at startup and every 10 minutes)
 startCleanup();
 
-// Suppress console as fallback (early, before any requires)
-const originalConsoleLog = console.log;
-const originalConsoleError = console.error;
-const originalConsoleWarn = console.warn;
+// ==================== Console Filtering ====================
+const originalConsole = {
+  log: console.log,
+  error: console.error,
+  warn: console.warn
+};
 
-const forbiddenPatternsConsole = [
-  'closing session',
-  'closing open session',
-  'sessionentry',
-  'prekey bundle',
-  'pendingprekey',
-  '_chains',
-  'registrationid',
-  'currentratchet',
-  'chainkey',
-  'ratchet',
-  'signal protocol',
-  'ephemeralkeypair',
-  'indexinfo',
-  'basekey'
+const FORBIDDEN_PATTERNS = [
+  'closing session', 'closing open session', 'sessionentry', 'prekey bundle',
+  'pendingprekey', '_chains', 'registrationid', 'currentratchet', 'chainkey',
+  'ratchet', 'signal protocol', 'ephemeralkeypair', 'indexinfo', 'basekey'
 ];
 
-console.log = (...args) => {
-  const message = args.map(a => typeof a === 'string' ? a : typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ').toLowerCase();
-  if (!forbiddenPatternsConsole.some(pattern => message.includes(pattern))) {
-    originalConsoleLog.apply(console, args);
+const filterConsole = (method, args) => {
+  const message = args.map(a => 
+    typeof a === 'string' ? a : 
+    typeof a === 'object' ? JSON.stringify(a) : String(a)
+  ).join(' ').toLowerCase();
+  
+  if (!FORBIDDEN_PATTERNS.some(p => message.includes(p))) {
+    originalConsole[method].apply(console, args);
   }
 };
 
-console.error = (...args) => {
-  const message = args.map(a => typeof a === 'string' ? a : typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ').toLowerCase();
-  if (!forbiddenPatternsConsole.some(pattern => message.includes(pattern))) {
-    originalConsoleError.apply(console, args);
-  }
-};
+console.log = (...args) => filterConsole('log', args);
+console.error = (...args) => filterConsole('error', args);
+console.warn = (...args) => filterConsole('warn', args);
 
-console.warn = (...args) => {
-  const message = args.map(a => typeof a === 'string' ? a : typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ').toLowerCase();
-  if (!forbiddenPatternsConsole.some(pattern => message.includes(pattern))) {
-    originalConsoleWarn.apply(console, args);
-  }
-};
-
-// Now safe to load libraries
+// ==================== Module Imports ====================
 const pino = require('pino');
 const {
   default: makeWASocket,
   useMultiFileAuthState,
   DisconnectReason,
-  Browsers
+  fetchLatestBaileysVersion
 } = require('@whiskeysockets/baileys');
 const qrcode = require('qrcode-terminal');
-const config = require('./config');
-const handler = require('./handler');
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const os = require('os');
+const config = require('./config');
+const handler = require('./handler');
 
-// Remove Puppeteer cache (if some dependency downloaded Chromium into ~/.cache/puppeteer)
-function cleanupPuppeteerCache() {
+// ==================== Constants ====================
+const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+const WATCHDOG_INTERVAL = 5 * 60 * 1000;   // 5 minutes
+const MESSAGE_TTL = 5 * 60 * 1000;          // 5 minutes
+const CLEANUP_INTERVAL = 60 * 1000;          // 1 minute
+const RECONNECT_DELAY = 3000;                // 3 seconds
+const DEFAULT_MAX_MESSAGE_AGE = 5;           // minutes
+
+// ==================== Utility Functions ====================
+
+/**
+ * Clean Puppeteer cache to save disk space
+ */
+const cleanupPuppeteerCache = () => {
   try {
-    const home = os.homedir();
-    const cacheDir = path.join(home, '.cache', 'puppeteer');
-
+    const cacheDir = path.join(os.homedir(), '.cache', 'puppeteer');
     if (fs.existsSync(cacheDir)) {
       console.log('🧹 Removing Puppeteer cache at:', cacheDir);
       fs.rmSync(cacheDir, { recursive: true, force: true });
       console.log('✅ Puppeteer cache removed');
     }
   } catch (err) {
-    console.error('⚠️ Failed to cleanup Puppeteer cache:', err.message || err);
-  }
-}
-// Optimized in-memory store with hard limits (Map-based for better memory management)
-const store = {
-  messages: new Map(), // Use Map instead of plain object
-  maxPerChat: 20, // Limit to 20 messages per chat
-  
-  bind: (ev) => {
-    ev.on('messages.upsert', ({ messages }) => {
-      for (const msg of messages) {
-        if (!msg.key?.id) continue;
-        
-        const jid = msg.key.remoteJid;
-        if (!store.messages.has(jid)) {
-          store.messages.set(jid, new Map());
-        }
-        
-        const chatMsgs = store.messages.get(jid);
-        chatMsgs.set(msg.key.id, msg);
-        
-        // Aggressive cleanup per chat - keep only recent messages
-        if (chatMsgs.size > store.maxPerChat) {
-          // Remove oldest message (first entry in Map)
-          const oldestKey = chatMsgs.keys().next().value;
-          chatMsgs.delete(oldestKey);
-        }
-      }
-    });
-  },
-  
-  loadMessage: async (jid, id) => {
-    return store.messages.get(jid)?.get(id) || null;
+    console.error('⚠️ Failed to cleanup Puppeteer cache:', err.message);
   }
 };
 
-// Optimized message deduplication (Set-based, no timestamps needed)
-const processedMessages = new Set();
-
-// Aggressive cleanup - clear every 5 minutes
-setInterval(() => {
-  processedMessages.clear();
-}, 5 * 60 * 1000); // Every 5 minutes
-
-// Custom Pino logger with suppression for Baileys noise
+/**
+ * Create a Pino logger with suppressed noise
+ * @param {string} level - Log level
+ * @returns {object} Pino logger instance
+ */
 const createSuppressedLogger = (level = 'silent') => {
-  const forbiddenPatterns = [
-    'closing session',
-    'closing open session',
-    'sessionentry',
-    'prekey bundle',
-    'pendingprekey',
-    '_chains',
-    'registrationid',
-    'currentratchet',
-    'chainkey',
-    'ratchet',
-    'signal protocol',
-    'ephemeralkeypair',
-    'indexinfo',
-    'basekey',
-    'sessionentry',
-    'ratchetkey'
+  const forbidden = [
+    'closing session', 'closing open session', 'sessionentry', 'prekey bundle',
+    'pendingprekey', '_chains', 'registrationid', 'currentratchet', 'chainkey',
+    'ratchet', 'signal protocol', 'ephemeralkeypair', 'indexinfo', 'basekey',
+    'sessionentry', 'ratchetkey'
   ];
 
   let logger;
   try {
     logger = pino({
       level,
-      // Fallback transport without pino-pretty (in case not installed)
       transport: process.env.NODE_ENV === 'production' ? undefined : {
         target: 'pino-pretty',
-        options: {
-          colorize: true,
-          ignore: 'pid,hostname'
-        }
+        options: { colorize: true, ignore: 'pid,hostname' }
       },
-      customLevels: {
-        trace: 0,
-        debug: 1,
-        info: 2,
-        warn: 3,
-        error: 4,
-        fatal: 5
-      },
-      // Redact sensitive fields
       redact: ['registrationId', 'ephemeralKeyPair', 'rootKey', 'chainKey', 'baseKey']
     });
-  } catch (err) {
-    // Fallback to basic pino without transport
-    logger = pino({ level });
+  } catch {
+    logger = pino({ level }); // Fallback
   }
 
-  // Wrap log methods to filter
   const originalInfo = logger.info.bind(logger);
   logger.info = (...args) => {
     const msg = args.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(' ').toLowerCase();
-    if (!forbiddenPatterns.some(pattern => msg.includes(pattern))) {
+    if (!forbidden.some(p => msg.includes(p))) {
       originalInfo(...args);
     }
   };
-  logger.debug = () => {}; // Fully disable debug
-  logger.trace = () => {}; // Fully disable trace
+  logger.debug = () => {};
+  logger.trace = () => {};
   return logger;
 };
 
-// Main connection function
-async function startBot() {
-  const sessionFolder = `./${config.sessionName}`;
-  const sessionFile = path.join(sessionFolder, 'creds.json');
- 
-  // Check if sessionID is provided and process DEXMINIBOT~ format session
-  if (config.sessionID && config.sessionID.startsWith('DEXMINIBOT~')) {
+// ==================== In-Memory Store ====================
+class MessageStore {
+  constructor(maxPerChat = 20) {
+    this.messages = new Map(); // Map<chatJid, Map<msgId, message>>
+    this.maxPerChat = maxPerChat;
+  }
+
+  bind(ev) {
+    ev.on('messages.upsert', ({ messages }) => {
+      for (const msg of messages) {
+        if (!msg.key?.id) continue;
+        const jid = msg.key.remoteJid;
+        if (!this.messages.has(jid)) {
+          this.messages.set(jid, new Map());
+        }
+        const chatMsgs = this.messages.get(jid);
+        chatMsgs.set(msg.key.id, msg);
+
+        // Enforce per-chat limit
+        if (chatMsgs.size > this.maxPerChat) {
+          const sorted = Array.from(chatMsgs.entries())
+            .sort((a, b) => (a[1].messageTimestamp || 0) - (b[1].messageTimestamp || 0));
+          for (let i = 0; i < sorted.length - this.maxPerChat; i++) {
+            chatMsgs.delete(sorted[i][0]);
+          }
+        }
+      }
+    });
+  }
+
+  async loadMessage(jid, id) {
+    return this.messages.get(jid)?.get(id) || null;
+  }
+
+  cleanupOldChats() {
+    const now = Date.now();
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+    for (const [jid, chatMsgs] of this.messages.entries()) {
+      const timestamps = Array.from(chatMsgs.values())
+        .map(m => (m.messageTimestamp || 0) * 1000);
+      if (timestamps.length && now - Math.max(...timestamps) > ONE_DAY) {
+        this.messages.delete(jid);
+      }
+    }
+  }
+}
+
+// ==================== TTL Set for Deduplication ====================
+class TtlSet {
+  constructor(ttlMs = MESSAGE_TTL) {
+    this.ttl = ttlMs;
+    this.map = new Map(); // key -> timestamp
+  }
+
+  add(key) {
+    this.map.set(key, Date.now());
+  }
+
+  has(key) {
+    const ts = this.map.get(key);
+    if (!ts) return false;
+    if (Date.now() - ts > this.ttl) {
+      this.map.delete(key);
+      return false;
+    }
+    return true;
+  }
+
+  cleanup() {
+    const now = Date.now();
+    for (const [key, ts] of this.map.entries()) {
+      if (now - ts > this.ttl) this.map.delete(key);
+    }
+  }
+}
+
+// ==================== Main Bot Class ====================
+class WhatsAppBot {
+  constructor() {
+    this.sock = null;
+    this.store = new MessageStore(config.maxPerChat || 20);
+    this.processedMessages = new TtlSet();
+    this.watchdogInterval = null;
+    this.lastActivity = Date.now();
+    this.isShuttingDown = false;
+    this.reconnectTimer = null;
+  }
+
+  /**
+   * Start the bot
+   */
+  async start() {
+    console.log('🚀 Starting WhatsApp MD Bot...\n');
+    console.log(`📦 Bot Name: ${config.botName}`);
+    console.log(`⚡ Prefix: ${config.prefix}`);
+    const ownerNames = Array.isArray(config.ownerName) ? config.ownerName.join(',') : config.ownerName;
+    console.log(`👑 Owner: ${ownerNames}\n`);
+
+    cleanupPuppeteerCache();
+    await this._connect();
+    this._setupPeriodicCleanup();
+    this._setupShutdownHandlers();
+  }
+
+  /**
+   * Establish connection to WhatsApp
+   */
+  async _connect() {
+    try {
+      const sessionFolder = `./${config.sessionName}`;
+      const sessionFile = path.join(sessionFolder, 'creds.json');
+
+      // Process KnightBot! session if provided
+      if (config.sessionID?.startsWith('KnightBot!')) {
+        await this._processKnightBotSession(sessionFolder, sessionFile);
+      }
+
+      const { state, saveCreds } = await useMultiFileAuthState(sessionFolder);
+      const { version } = await fetchLatestBaileysVersion();
+      const logger = createSuppressedLogger('silent');
+
+      this.sock = makeWASocket({
+        version,
+        logger,
+        printQRInTerminal: false,
+        browser: ['Chrome', 'Windows', '10.0'],
+        auth: state,
+        syncFullHistory: false,
+        downloadHistory: false,
+        markOnlineOnConnect: false,
+        getMessage: async () => undefined
+      });
+
+      this.store.bind(this.sock.ev);
+      this._attachEventHandlers(saveCreds);
+      this._startWatchdog();
+
+    } catch (error) {
+      console.error('❌ Connection error:', error.message);
+      this._scheduleReconnect();
+    }
+  }
+
+  /**
+   * Process KnightBot! session string
+   */
+  async _processKnightBotSession(sessionFolder, sessionFile) {
     try {
       const [header, b64data] = config.sessionID.split('!');
-     
-      if (header !== 'DEXMINIBOT' || !b64data) {
-        throw new Error("❌ Invalid session format. Expected 'DEXMINIBOT~.....'");
+      if (header !== 'KnightBot' || !b64data) {
+        throw new Error("Invalid session format. Expected 'KnightBot!.....'");
       }
-     
       const cleanB64 = b64data.replace('...', '');
-      const compressedData = Buffer.from(cleanB64, 'base64');
-      const decompressedData = zlib.gunzipSync(compressedData);
-     
-      // Ensure session folder exists
+      const compressed = Buffer.from(cleanB64, 'base64');
+      const decompressed = zlib.gunzipSync(compressed);
+
       if (!fs.existsSync(sessionFolder)) {
         fs.mkdirSync(sessionFolder, { recursive: true });
       }
-     
-      // Write decompressed session data to creds.json
-      fs.writeFileSync(sessionFile, decompressedData, 'utf8');
-      console.log('📡 Session : 🔑 Retrieved from DEXMINIBOT Session');
-     
+      fs.writeFileSync(sessionFile, decompressed, 'utf8');
+      console.log('📡 Session: 🔑 Retrieved from KnightBot Session');
     } catch (e) {
-      console.error('📡 Session : ❌ Error processing DEXMINIBOT session:', e.message);
-      // Continue with normal QR flow if session processing fails
+      console.error('📡 Session: ❌ Error processing KnightBot session:', e.message);
     }
   }
- 
-  const { state, saveCreds } = await useMultiFileAuthState(sessionFolder);
- 
-  // Use suppressed logger for socket
-  const suppressedLogger = createSuppressedLogger('silent');
- 
-  const sock = makeWASocket({
-    logger: suppressedLogger,
-    printQRInTerminal: false,
-    browser: Browsers.macOS('Desktop'),
-    auth: state,
-    // Memory optimization: prevent loading old messages into RAM
-    syncFullHistory: false,
-    downloadHistory: false,
-    markOnlineOnConnect: false,
-    getMessage: async () => undefined // Don't load messages from store
-  });
- 
-  // Bind store to socket
-  store.bind(sock.ev);
- 
-  // Watchdog for inactive socket (Baileys bug fix)
-  let lastActivity = Date.now();
-  const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
-  // Update on every message
-  sock.ev.on('messages.upsert', () => {
-    lastActivity = Date.now();
-  });
+  /**
+   * Attach all event handlers to the socket
+   */
+  _attachEventHandlers(saveCreds) {
+    // Connection updates
+    this.sock.ev.on('connection.update', this._handleConnectionUpdate.bind(this));
+    
+    // Credentials save
+    this.sock.ev.on('creds.update', saveCreds);
+    
+    // Message handling
+    this.sock.ev.on('messages.upsert', this._handleMessages.bind(this));
+    
+    // Group participant updates
+    this.sock.ev.on('group-participants.update', this._handleGroupUpdate.bind(this));
+    
+    // Errors
+    this.sock.ev.on('error', this._handleSocketError.bind(this));
+    
+    // Update activity on any message
+    this.sock.ev.on('messages.upsert', this._resetActivity.bind(this));
+  }
 
-  // Check every 5 min
-  const watchdogInterval = setInterval(async () => {
-    if (Date.now() - lastActivity > INACTIVITY_TIMEOUT && sock.ws.readyState === 1) { // WebSocket open but inactive
-      console.log('⚠️ No activity detected. Forcing reconnect...');
-      await sock.end(undefined, undefined, { reason: 'inactive' });
-      clearInterval(watchdogInterval);
-      setTimeout(() => startBot(), 5000); // Slightly longer delay
-    }
-  }, 5 * 60 * 1000); // Every 5 min check
-
-  // Clear on close/open
-  sock.ev.on('connection.update', (update) => {
-    const { connection } = update;
-    if (connection === 'open') {
-      lastActivity = Date.now(); // Reset on open
-    } else if (connection === 'close') {
-      clearInterval(watchdogInterval);
-    }
-  });
- 
-  // Connection update handler
-  sock.ev.on('connection.update', async (update) => {
+  /**
+   * Handle connection updates
+   */
+  async _handleConnectionUpdate(update) {
     const { connection, lastDisconnect, qr } = update;
-   
+
     if (qr) {
       console.log('\n\n📱 Scan this QR code with WhatsApp:\n');
       qrcode.generate(qr, { small: true });
     }
-   
+
     if (connection === 'close') {
+      this._stopWatchdog();
       const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
       const statusCode = lastDisconnect?.error?.output?.statusCode;
       const errorMessage = lastDisconnect?.error?.message || 'Unknown error';
-     
-      // Suppress verbose error output for common stream errors (515, etc.)
-      if (statusCode === 515 || statusCode === 503 || statusCode === 408) {
+
+      if ([408, 503, 515].includes(statusCode)) {
         console.log(`⚠️ Connection closed (${statusCode}). Reconnecting...`);
       } else {
         console.log('Connection closed due to:', errorMessage, '\nReconnecting:', shouldReconnect);
       }
-     
-      if (shouldReconnect) {
-        setTimeout(() => startBot(), 3000);
-      }
+
+      if (shouldReconnect) this._scheduleReconnect();
     } else if (connection === 'open') {
-      console.log('\n✅ Bot connected successfully!');
-      console.log(`📱 Bot Number: ${sock.user.id.split(':')[0]}`);
-      console.log(`🤖 Bot Name: ${config.botName}`);
-      console.log(`⚡ Prefix: ${config.prefix}`);
-      const ownerNames = Array.isArray(config.ownerName) ? config.ownerName.join(',') : config.ownerName;
-      console.log(`👑 Owner: ${ownerNames}\n`);
-      console.log('Bot is ready to receive messages!\n');
-     
-      // Set bot status
-      if (config.autoBio) {
-        await sock.updateProfileStatus(`${config.botName} | Active 24/7`);
+      this._onConnected();
+    }
+  }
+
+  /**
+   * Actions when successfully connected
+   */
+  async _onConnected() {
+    console.log('\n✅ Bot connected successfully!');
+    console.log(`📱 Bot Number: ${this.sock.user.id.split(':')[0]}`);
+    console.log(`🤖 Bot Name: ${config.botName}`);
+    console.log(`⚡ Prefix: ${config.prefix}`);
+    const ownerNames = Array.isArray(config.ownerName) ? config.ownerName.join(',') : config.ownerName;
+    console.log(`👑 Owner: ${ownerNames}\n`);
+    console.log('Bot is ready to receive messages!\n');
+
+    if (config.autoBio) {
+      await this.sock.updateProfileStatus(`${config.botName} | Active 24/7`).catch(() => {});
+    }
+
+    if (handler.initializeAntiCall) {
+      handler.initializeAntiCall(this.sock);
+    } else {
+      console.warn('⚠️ initializeAntiCall not found in handler');
+    }
+
+    this.store.cleanupOldChats();
+    console.log(`🧹 Store cleaned. Active chats: ${this.store.messages.size}`);
+    this._resetActivity();
+    this._startWatchdog(); // Restart watchdog on new connection
+  }
+
+  /**
+   * Handle incoming messages
+   */
+  async _handleMessages({ messages, type }) {
+    if (type !== 'notify') return;
+
+    for (const msg of messages) {
+      if (!msg.message || !msg.key?.id) continue;
+
+      const from = msg.key.remoteJid;
+      if (!from || this._isSystemJid(from)) continue;
+
+      const msgId = msg.key.id;
+
+      // Deduplication
+      if (this.processedMessages.has(msgId)) continue;
+
+      // Age validation
+      const maxAge = (config.maxMessageAgeMinutes || DEFAULT_MAX_MESSAGE_AGE) * 60 * 1000;
+      if (msg.messageTimestamp) {
+        const age = Date.now() - (msg.messageTimestamp * 1000);
+        if (age > maxAge) continue;
       }
-     
-      // Initialize anti-call feature
-      handler.initializeAntiCall(sock);
-     
-      // Cleanup old chats (keep only active ones, e.g., last touched <1 day)
-      const now = Date.now();
-      for (const [jid, chatMsgs] of store.messages.entries()) {
-        const timestamps = Array.from(chatMsgs.values()).map(m => m.messageTimestamp * 1000 || 0);
-        if (timestamps.length > 0 && now - Math.max(...timestamps) > 24 * 60 * 60 * 1000) { // 1 day old chat
-          store.messages.delete(jid);
+
+      this.processedMessages.add(msgId);
+
+      // Store message
+      if (!this.store.messages.has(from)) {
+        this.store.messages.set(from, new Map());
+      }
+      const chatMsgs = this.store.messages.get(from);
+      chatMsgs.set(msgId, msg);
+
+      // Enforce per-chat limit
+      if (chatMsgs.size > this.store.maxPerChat) {
+        const sorted = Array.from(chatMsgs.entries())
+          .sort((a, b) => (a[1].messageTimestamp || 0) - (b[1].messageTimestamp || 0));
+        for (let i = 0; i < sorted.length - this.store.maxPerChat; i++) {
+          chatMsgs.delete(sorted[i][0]);
         }
       }
-      console.log(`🧹 Store cleaned. Active chats: ${store.messages.size}`);
+
+      // Process command (async, but errors handled)
+      handler.handleMessage(this.sock, msg).catch(err => {
+        if (!err.message?.includes('rate-overlimit') && !err.message?.includes('not-authorized')) {
+          console.error('Error handling message:', err.message);
+        }
+      });
+
+      // Background tasks
+      setImmediate(() => this._runBackgroundTasks(msg, from));
     }
-  });
- 
-  // Credentials update handler
-  sock.ev.on('creds.update', saveCreds);
- 
-  // System JID filter - checks if JID is from broadcast/status/newsletter
-  const isSystemJid = (jid) => {
-    if (!jid) return true;
+  }
+
+  /**
+   * Run non-blocking background tasks
+   */
+  async _runBackgroundTasks(msg, from) {
+    try {
+      if (config.autoRead && from.endsWith('@g.us')) {
+        await this.sock.readMessages([msg.key]).catch(() => {});
+      }
+      if (from.endsWith('@g.us')) {
+        const groupMetadata = await handler.getGroupMetadata?.(this.sock, msg.key.remoteJid);
+        if (groupMetadata) {
+          await handler.handleAntilink?.(this.sock, msg, groupMetadata);
+        }
+      }
+    } catch (e) {
+      // Silently ignore background errors
+    }
+  }
+
+  /**
+   * Handle group participant updates
+   */
+  async _handleGroupUpdate(update) {
+    if (handler.handleGroupUpdate) {
+      await handler.handleGroupUpdate(this.sock, update).catch(() => {});
+    }
+  }
+
+  /**
+   * Handle socket errors
+   */
+  _handleSocketError(error) {
+    const statusCode = error?.output?.statusCode;
+    if ([408, 503, 515].includes(statusCode)) return;
+    console.error('Socket error:', error.message || error);
+  }
+
+  /**
+   * Reset activity timestamp
+   */
+  _resetActivity() {
+    this.lastActivity = Date.now();
+  }
+
+  /**
+   * Check if JID is system (broadcast, status, newsletter)
+   */
+  _isSystemJid(jid) {
     return jid.includes('@broadcast') ||
            jid.includes('status.broadcast') ||
            jid.includes('@newsletter') ||
            jid.includes('@newsletter.');
-  };
- 
-  // Messages handler - Process only new messages
-  sock.ev.on('messages.upsert', ({ messages, type }) => {
-    // Only process "notify" type (new messages), skip "append" (old messages from history)
-    if (type !== 'notify') return;
-   
-    // Process messages in the array
-    for (const msg of messages) {
-      // Skip if message is invalid or missing key
-      if (!msg.message || !msg.key?.id) continue;
-     
-      // Skip messages from bot itself to prevent feedback loops
-      // Note: Owner commands work fine because owner messages have fromMe=false
-      // Only messages sent BY the bot itself have fromMe=true
-    // if (msg.key.fromMe) continue;
-     
-      const from = msg.key.remoteJid;
-     
-      // HARD DM BLOCK - Ignore all private chats (must be first check)
-      // Bot operates ONLY in groups/communities
-      // Skip if from is null/undefined
-      if (!from) {
-        continue;
+  }
+
+  /**
+   * Start the watchdog timer
+   */
+  _startWatchdog() {
+    this._stopWatchdog();
+    this.watchdogInterval = setInterval(() => {
+      const inactive = Date.now() - this.lastActivity > INACTIVITY_TIMEOUT;
+      if (inactive && this.sock?.ws?.readyState === 1) {
+        console.log('⚠️ No activity detected. Forcing reconnect...');
+        this.sock.end(undefined, undefined, { reason: 'inactive' });
       }
-     
-      // System message filter - ignore broadcast/status/newsletter messages
-      if (isSystemJid(from)) {
-        continue; // Silently ignore system messages
-      }
-     
-      // Deduplication: Skip if message has already been processed
-      const msgId = msg.key.id;
-      if (processedMessages.has(msgId)) continue;
-     
-      // Timestamp validation: Only process messages within last 5 minutes
-      const MESSAGE_AGE_LIMIT = 5 * 60 * 1000; // 5 minutes in milliseconds
-      let messageAge = 0;
-      if (msg.messageTimestamp) {
-        messageAge = Date.now() - (msg.messageTimestamp * 1000);
-        if (messageAge > MESSAGE_AGE_LIMIT) {
-          // Message is too old, skip processing
-          continue;
-        }
-      }
-     
-      // Mark message as processed
-      processedMessages.add(msgId);
+    }, WATCHDOG_INTERVAL);
+  }
+
+  /**
+   * Stop the watchdog timer
+   */
+  _stopWatchdog() {
+    if (this.watchdogInterval) {
+      clearInterval(this.watchdogInterval);
+      this.watchdogInterval = null;
+    }
+  }
+
+  /**
+   * Schedule a reconnection attempt
+   */
+  _scheduleReconnect() {
+    if (this.isShuttingDown) return;
+    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    this.reconnectTimer = setTimeout(() => {
+      console.log('🔄 Attempting to reconnect...');
+      this._connect();
+    }, RECONNECT_DELAY);
+  }
+
+  /**
+   * Set up periodic cleanup of deduplication set
+   */
+  _setupPeriodicCleanup() {
+    setInterval(() => {
+      this.processedMessages.cleanup();
+    }, CLEANUP_INTERVAL);
+  }
+
+  /**
+   * Set up shutdown handlers
+   */
+  _setupShutdownHandlers() {
+    const shutdown = async (signal) => {
+      if (this.isShuttingDown) return;
+      this.isShuttingDown = true;
+      console.log(`\n👋 Received ${signal}. Cleaning up...`);
       
-      // Store message FIRST (before processing)
-      // from already defined above in DM block check
-      if (msg.key && msg.key.id) {
-        if (!store.messages.has(from)) {
-          store.messages.set(from, new Map());
-        }
-        const chatMsgs = store.messages.get(from);
-        chatMsgs.set(msg.key.id, msg);
-        
-        // Cleanup: Keep only last 20 per chat (reduced from 200)
-        if (chatMsgs.size > store.maxPerChat) {
-          // Remove oldest messages
-          const sortedIds = Array.from(chatMsgs.entries())
-            .sort((a, b) => (a[1].messageTimestamp || 0) - (b[1].messageTimestamp || 0))
-            .map(([id]) => id);
-          for (let i = 0; i < sortedIds.length - store.maxPerChat; i++) {
-            chatMsgs.delete(sortedIds[i]);
-          }
-        }
+      this._stopWatchdog();
+      if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+      
+      if (this.sock) {
+        await this.sock.end(undefined, undefined, { reason: 'shutdown' });
       }
-     
-      // Process command IMMEDIATELY (don't block on other operations)
-      handler.handleMessage(sock, msg).catch(err => {
-        if (!err.message?.includes('rate-overlimit') &&
-            !err.message?.includes('not-authorized')) {
-          console.error('Error handling message:', err.message);
-        }
-      });
-     
-      // Do other operations in background (non-blocking)
-      setImmediate(async () => {
-        // Auto-read messages (only for groups - DMs already blocked above)
-        // from already defined above in DM block check
-        if (config.autoRead && from.endsWith('@g.us')) {
-          try {
-            await sock.readMessages([msg.key]);
-          } catch (e) {
-            // Silently handle
-          }
-        }
-       
-        // Check for antilink (only for groups)
-        // from already defined above in DM block check, and we know it's a group
-        if (from.endsWith('@g.us')) {
-          try {
-            const groupMetadata = await handler.getGroupMetadata(sock, msg.key.remoteJid);
-            if (groupMetadata) {
-              await handler.handleAntilink(sock, msg, groupMetadata);
-            }
-          } catch (error) {
-            // Silently handle
-          }
-        }
-      });
-    }
-  });
- 
-  // Message receipt updates (silently handled, no logging)
-  sock.ev.on('message-receipt.update', () => {
-    // Silently handle receipt updates
-  });
- 
-  // Message updates (silently handled, no logging)
-  sock.ev.on('messages.update', () => {
-    // Silently handle message updates
-  });
- 
-  // Group participant updates (join/leave)
-  sock.ev.on('group-participants.update', async (update) => {
-    await handler.handleGroupUpdate(sock, update);
-  });
- 
-  // Handle errors - suppress common stream errors
-  sock.ev.on('error', (error) => {
-    const statusCode = error?.output?.statusCode;
-    // Suppress verbose output for common stream errors
-    if (statusCode === 515 || statusCode === 503 || statusCode === 408) {
-      // These are usually temporary connection issues, handled by reconnection
-      return;
-    }
-    console.error('Socket error:', error.message || error);
-  });
- 
-  return sock;
+      
+      console.log('✅ Bot shut down gracefully.');
+      process.exit(0);
+    };
+
+    process.on('SIGINT', () => shutdown('SIGINT'));
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+  }
 }
-// Start the bot
-console.log('🚀 Starting WhatsApp MD Bot...\n');
-console.log(`📦 Bot Name: ${config.botName}`);
-console.log(`⚡ Prefix: ${config.prefix}`);
-const ownerNames = Array.isArray(config.ownerName) ? config.ownerName.join(',') : config.ownerName;
-console.log(`👑 Owner: ${ownerNames}\n`);
 
-// Proactively delete Puppeteer cache so it doesn't fill disk on panels
-cleanupPuppeteerCache();
-
-startBot().catch(err => {
-  console.error('Error starting bot:', err);
-  process.exit(1);
-});
-// Handle process termination
+// ==================== Global Error Handlers ====================
 process.on('uncaughtException', (err) => {
-  // Handle ENOSPC errors gracefully without crashing
   if (err.code === 'ENOSPC' || err.errno === -28 || err.message?.includes('no space left on device')) {
     console.error('⚠️ ENOSPC Error: No space left on device. Attempting cleanup...');
-    const { cleanupOldFiles } = require('./utils/cleanup');
     cleanupOldFiles();
+    cleanupTempFiles();
     console.warn('⚠️ Cleanup completed. Bot will continue but may experience issues until space is freed.');
-    return; // Don't crash, just log and continue
+    return;
   }
   console.error('Uncaught Exception:', err);
+  process.exit(1);
 });
+
 process.on('unhandledRejection', (err) => {
-  // Handle ENOSPC errors gracefully
   if (err.code === 'ENOSPC' || err.errno === -28 || err.message?.includes('no space left on device')) {
     console.warn('⚠️ ENOSPC Error in promise: No space left on device. Attempting cleanup...');
-    const { cleanupOldFiles } = require('./utils/cleanup');
     cleanupOldFiles();
+    cleanupTempFiles();
     console.warn('⚠️ Cleanup completed. Bot will continue but may experience issues until space is freed.');
-    return; // Don't crash, just log and continue
+    return;
   }
- 
-  // Don't spam console with rate limit errors
-  if (err.message && err.message.includes('rate-overlimit')) {
+  if (err.message?.includes('rate-overlimit')) {
     console.warn('⚠️ Rate limit reached. Please slow down your requests.');
     return;
   }
   console.error('Unhandled Rejection:', err);
 });
-// Export store for use in commands
-module.exports = { store };
+
+// ==================== Start the Bot ====================
+const bot = new WhatsAppBot();
+bot.start().catch(err => {
+  console.error('Fatal error starting bot:', err);
+  process.exit(1);
+});
+
+// ==================== Export Store ====================
+module.exports = { store: bot.store };
