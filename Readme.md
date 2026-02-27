@@ -146,7 +146,7 @@ For a complete walkthrough, watch our official YouTube tutorial:
 
 <div align="center">
 
-https://img.shields.io/badge/Watch%20Tutorial-FF0000?style=for-the-badge&logo=youtube&logoColor=white
+[https://img.shields.io/badge/Watch%20Tutorial-FF0000?style=for-the-badge&logo=youtube&logoColor=white](https://www.youtube.com/watch?v=Hmp17yyU9Xc)
 
 </div>
 
