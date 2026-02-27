@@ -64,7 +64,7 @@ Get your bot up and running in minutes with these simple steps.
 
 ### 2. Obtain Your Session String
 
-Use the official pair code generator:
+Use the official pair code generator to get a session string. **Never share your session string publicly** – it gives full access to your WhatsApp account.
 
 <div align="center">
   
@@ -75,32 +75,60 @@ Use the official pair code generator:
 After scanning, you will receive a session string starting with `AS~...`.  
 Store it **securely** and **never commit it** to any public repository.
 
-Paste into `config.js` or set as env var `SESSION_ID`.
+#### How to Use Your Session
 
----
+- **Option 1:** Set it as the environment variable `SESSION_ID` on your hosting platform.  
+- **Option 2:** Paste it directly into `config.js` (only if you are running locally and **never** push this file to GitHub).
 
-## 🛠 Local Setup
+Example `config.js` snippet:
 
-Prerequisites: Node.js 18+, Git, WhatsApp account.
-
-``bash
+```js
+sessionID: process.env.SESSION_ID || 'AS~your_session_here', // Use environment variable for security
+🛠 Local Setup
+Prerequisites
+Node.js 18 or higher
+Git
+A WhatsApp account
+Installation Steps
+# Clone your forked repository
 git clone https://github.com/Dexsam07/As-zara-mini.git
 cd As-zara-mini
+
+# Install dependencies
 npm install
-# Add SESSION_ID=AS~... to .env or edit config.js
+
+# Create a .env file (recommended) or edit config.js
+# echo "SESSION_ID=AS~your_session_here" > .env
+
+# Start the bot
 node index.js
-QR scan appears if no session.
+If sessionID is empty in config.js, a QR code will appear in the terminal – scan it with WhatsApp Linked Devices.
 ☁️ Deployment Guides
-Katabump Panel: Dashboard Login → Deploy (upload your repo zip or git)
-Heroku: Create New App → Connect GitHub repo
-Render: New → Web Service → Connect GitHub repo
-Video Tutorial: Watch on YouTube
+Choose your platform:
+�
+
+�
+�
+�
+�
+
+▶️ Video Tutorial
+�
+
+�
+�
+
 🌐 Community & Support
-WhatsApp Channel: Join Here
-WhatsApp Group (if any): Join Group
-Report Issues: GitHub Issues
+Join for updates, help, and discussions.
+�
+
+�
+�
+�
+�
+
 📚 Commands Overview
-Type .menu in chat for full list.
+Type .menu in WhatsApp to see the full list. Highlights:
 Category
 Commands
 Description
@@ -109,43 +137,46 @@ General
 Bot info and status
 Sticker
 .sticker, .toimage, .emoji
-Create stickers from media
+Create stickers from images/videos
 Download
 .ytmp3, .ytmp4, .tiktok
-Download from YouTube/TikTok
+Download media from YouTube, TikTok
 Group
 .antilink, .welcome, .tagall
 Group management tools
 Owner
 .restart, .update, .setpp
 Bot control and customization
-All configurable in config.js and commands/ folder.
+All commands configurable via config.js and commands/ folder.
 🤝 Contributing
-Fork the repo
+Fork the repository.
 Create branch: git checkout -b feature/amazing-feature
-Commit: git commit -m 'Add amazing feature'
+Commit: git commit -m 'Add some amazing feature'
 Push: git push origin feature/amazing-feature
-Open Pull Request
-Follow existing style.
+Open Pull Request.
+Follow existing style and add docs.
 📝 License & Legal
 MIT License – see LICENSE file.
-Warning:
-For educational/experimental use only.
+Important Warning
+Educational/experimental use only.
 Not affiliated with WhatsApp.
-Risk of ban if misused (spam, bulk messaging, harassment).
+Risk of permanent ban for spam, bulk messaging, harassment.
 Use responsibly.
 🙏 Credits
-Dex Shyam Chaudhari – Main developer
-Baileys – Core library
-Open-source deps in package.json
-☕ Support the Developer
-Consider supporting the project!
+Dex Shyam Chaudhari – Main developer & maintainer
+Baileys – Core WhatsApp Web API library
+Contributors and libraries in package.json
+✉️ Support the Developer
+If helpful, support the project!
 �
 
-Support Here
+�
 �
 ￼
 �
 
 �
-Made with ❤️ by Dex Shyam Chaudhari © 2026 DEX. All rights reserved. 
+
+Made with ❤️ by Dex Shyam Chaudhari
+© 2026 DEX. All rights reserved.
+�
