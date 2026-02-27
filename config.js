@@ -38,7 +38,7 @@ const config = {
   // Bot Configuration
   botName: process.env.BOT_NAME || 'As-zara-mini',
   prefix: process.env.PREFIX || '.',
-  sessionName: process.env.SESSION_NAME || 'session',
+  sessionName: process.env.SESSION_NAME || 'AS~',
   sessionID: process.env.SESSION_ID || '',
   newsletterJid: process.env.NEWSLETTER_JID || '120363406449026172@newsletter',
   updateZipUrl: process.env.UPDATE_ZIP_URL || 'https://github.com/Dexsam07/As-zara-mini/archive/refs/heads/main.zip',
