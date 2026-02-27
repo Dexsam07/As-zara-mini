@@ -83,7 +83,7 @@ Paste into `config.js` or set as env var `SESSION_ID`.
 
 Prerequisites: Node.js 18+, Git, WhatsApp account.
 
-```bash
+``bash
 git clone https://github.com/Dexsam07/As-zara-mini.git
 cd As-zara-mini
 npm install
