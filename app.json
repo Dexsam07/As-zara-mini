@@ -1,17 +1,8 @@
 {
   "name": "As-zara-mini",
-  "description": "Advanced WhatsApp Multi-Device Bot with anti-call, group management, and extensible command system. Built on Baileys library.",
+  "description": "WhatsApp MD bot (Baileys)",
   "repository": "",
-  "logo": "https://i.imgur.com/your-logo-url.png",
-  "keywords": [
-    "whatsapp",
-    "bot",
-    "baileys",
-    "multi-device",
-    "nodejs",
-    "automation",
-    "chatbot"
-  ],
+  "keywords": ["whatsapp", "baileys", "bot", "node"],
   "buildpacks": [
     {
       "url": "https://github.com/heroku/heroku-buildpack-nodejs.git"
@@ -19,61 +10,10 @@
   ],
   "env": {
     "SESSION_ID": {
-      "description": "AS session string. Format: AS~!<base64_compressed_data> (obtained from session generator). Leave empty for QR scan on first run.",
+      "description": "AS session string (e.g. DEXMINIBOT~<base64_compressed_data>)",
       "required": false,
       "value": ""
-    },
-    "PREFIX": {
-      "description": "Command prefix for the bot (e.g., !, ., /).",
-      "required": true,
-      "value": "."
-    },
-    "BOT_NAME": {
-      "description": "Display name of your bot (shown in status and logs).",
-      "required": true,
-      "value": "AS-ZARA-MINI"
-    },
-    "OWNER_NAME": {
-      "description": "Name(s) of the bot owner(s). For multiple owners, separate with commas (e.g., John,Jane).",
-      "required": true,
-      "value": "Owner"
-    },
-    "OWNER_NUMBER": {
-      "description": "Phone number(s) of owner(s) with country code (without + or spaces). For multiple, separate with commas. Used for owner-only commands.",
-      "required": true,
-      "value": "+917384287404"
-    },
-    "AUTO_READ": {
-      "description": "Automatically mark messages as read in groups (true/false).",
-      "required": false,
-      "value": "false"
-    },
-    "AUTO_BIO": {
-      "description": "Automatically update bot's profile status with BOT_NAME (true/false).",
-      "required": false,
-      "value": "true"
-    },
-    "SESSION_NAME": {
-      "description": "Folder name to store authentication session data (default: session).",
-      "required": false,
-      "value": "session"
-    },
-    "MAX_MESSAGE_AGE_MINUTES": {
-      "description": "Maximum age (in minutes) of messages to process. Older messages are ignored to prevent spam.",
-      "required": false,
-      "value": "5"
-    },
-    "NODE_ENV": {
-      "description": "Environment mode (production or development). Affects logging level.",
-      "required": false,
-      "value": "production"
     }
-  },
-  "formation": {
-    "web": {
-      "quantity": 1,
-      "size": "eco"
-    }
-  },
-  "stack": "heroku-22"
+  }
 }
+
