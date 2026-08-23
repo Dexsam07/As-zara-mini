@@ -1,15 +1,15 @@
 <div align="center">
 
-## Dex mini bot 
+## AS-ZARA-MINI 
 [![Made with Baileys](https://img.shields.io/badge/Made%20with-Baileys-00bcd4?style=for-the-badge)](https://github.com/WhiskeySockets/Baileys)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-<img src="utils/bot_image.jpg" alt="Dex Mini Bot" width="260">
+<img src="https://raw.githubusercontent.com/Dexsam07/As-zara-mini/main/utils/bot_image.jpg" alt="AS-ZARA-MINI" width="260">
 
 </div>
 
-Dex Mini Bot is a WhatsApp MD bot built on top of the **Baileys** library.  
+AS-ZARA-MINI is a WhatsApp MD bot built on top of the **Baileys** library.  
 It’s designed to be fast, lightweight, and easy to customize without touching the core code.  
 This project is **fully open source** — you can modify it, rebrand it, and make your **own bot** from this codebase **free of cost**, without needing any permission from our side.  
 All commands and the overall structure are written in a way that makes customization (bot image, prefix, name, features, etc.) as easy as possible.
@@ -31,13 +31,13 @@ All commands and the overall structure are written in a way that makes customiza
 
 <div align="center">
 
-<a href="https://github.com/Dexsam07/Dex-Mini-bot/fork" target="_blank">
+<a href="https://github.com/Dexsam07/As-zara-mini/fork" target="_blank">
   <img src="https://img.shields.io/badge/Fork%20Repository-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="Fork on GitHub">
 </a>
 
 </div>
 
-> This creates your own copy of `Dex-mini-bot` under your GitHub account.
+> This creates your own copy of `AS-ZARA-MINI` under your GitHub account.
 
 ---
 
@@ -56,13 +56,13 @@ Deploy a small helper to generate a **pair code** and obtain your session string
 After scanning, you will receive a **session string** starting with:
 
 ```text
-DEXMINIBOT~H4....
+DEX~H4....
 ```
 
 Copy that full string and paste it into `config.js`:
 
 ```js
-sessionID: 'DEXMINIBOT~H4.....'
+sessionID: 'DEX~H4.....'
 ```
 
 Or set it via the `SESSION_ID` environment variable when hosting.
@@ -94,8 +94,8 @@ For a full step‑by‑step deployment tutorial (panels / VPS / Heroku), add or 
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/Dexsam07/Dex-mini-bot.git
-cd Dex-Mini-bot
+git clone https://github.com/Dexsam07/As-zara-mini.git
+cd As-zara-mini
 ```
 
 ### 2️⃣ Install dependencies
@@ -111,7 +111,7 @@ Edit `config.js`:
 - **Option A: Use session string**
 
   ```js
-  sessionID: 'DEXMINIBOT~H4.....'
+  sessionID: 'DEX~H4.....'
   ```
 
 - **Option B: Scan QR**
