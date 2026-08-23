@@ -7,7 +7,7 @@ const config = require('../../config');
 
 module.exports = {
     name: 'github',
-    aliases: ['repo', 'git', 'source', 'sc', 'script'],
+    aliases: ['git', 'source', 'sc', 'script'],
     category: 'general',
     description: 'Show bot GitHub repository and statistics',
     usage: '.github',

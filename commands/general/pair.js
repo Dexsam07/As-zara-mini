@@ -23,7 +23,7 @@ module.exports = {
     let query = args.join('').trim();
     if (!query) {
       return await sock.sendMessage(chatId, {
-        text: "❌ *Missing Number*\nExample: .pair 91305395XXXX\n\n🔗 Session website: https://dex-sessions.zone.id/",
+        text: "❌ *Missing Number*\nExample: .pair 91305395XXXX",
         contextInfo: forwardInfo
       }, { quoted: message });
     }
@@ -73,8 +73,7 @@ module.exports = {
                             `2. Tap 'Linked Devices'\n` +
                             `3. Tap 'Link a Device'\n` +
                             `4. Select 'Link with phone number instead'\n` +
-                            `5. Enter the code above.\n\n` +
-                            `🔗 Session website: https://dex-sessions.zone.id/`;
+                            `5. Enter the code above.`;
 
         await sock.sendMessage(chatId, {
           text: successText,
@@ -96,8 +95,6 @@ module.exports = {
       } else {
         errorMsg += "The server is currently offline or busy. Try again later.";
       }
-
-      errorMsg += "\n\n🔗 Session website: https://dex-sessions.zone.id/";
 
       await sock.sendMessage(chatId, {
         text: errorMsg,
