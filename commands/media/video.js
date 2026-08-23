@@ -72,17 +72,25 @@ module.exports = {
         }, { quoted: msg });
       }
 
-      // Get video: try EliteProTech first, then Yupra, then Okatsu fallback
+      // Get video: try the fast Adeel-Xtech provider first, then fall back.
       let videoData;
-      try {
-        videoData = await APIs.getEliteProTechVideoByUrl(videoUrl);
-      } catch (e1) {
+      const videoProviders = [
+        ['Adeel-Xtech', () => APIs.getAdeelVideoByUrl(videoUrl)],
+        ['EliteProTech', () => APIs.getEliteProTechVideoByUrl(videoUrl)],
+        ['Yupra', () => APIs.getYupraVideoByUrl(videoUrl)],
+        ['Okatsu', () => APIs.getOkatsuVideoByUrl(videoUrl)]
+      ];
+      let lastProviderError;
+      for (const [providerName, provider] of videoProviders) {
         try {
-          videoData = await APIs.getYupraVideoByUrl(videoUrl);
-        } catch (e2) {
-          videoData = await APIs.getOkatsuVideoByUrl(videoUrl);
+          videoData = await provider();
+          break;
+        } catch (error) {
+          lastProviderError = error;
+          console.warn(`[VIDEO] ${providerName} failed:`, error.message);
         }
       }
+      if (!videoData) throw lastProviderError || new Error('All video providers failed');
 
       // Send video directly using the download URL
       await sock.sendMessage(chatId, {

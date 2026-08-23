@@ -6,7 +6,7 @@ module.exports = {
     // Bot Owner Configuration
     ownerNumber: ['917384287404'], // Add your number without + or spaces (e.g., 919876543210)
     ownerName: ['Dex Shyam Chaudhari'], // Owner names corresponding to ownerNumber array
-
+    
     // Bot Configuration
     botName: 'Dex-mini-bot',
     prefix: '.',
@@ -16,12 +16,15 @@ module.exports = {
     sessionID: process.env.SESSION_ID || '',
     // Digits only, including country code; used only when DEX~ is missing/invalid.
     pairingNumber: process.env.PAIRING_NUMBER || '',
+    connectionNotifyEnabled: true,
+    developerName: 'Dex Shyam Chaudhari',
+    githubUrl: 'https://github.com/Dexsam07/As-zara-mini',
     newsletterJid: '120363406449026172@newsletter', // Newsletter JID for menu forwarding
     updateZipUrl: 'https://github.com/Dexsam07/Dex-mini-bot/archive/refs/heads/main.zip', // URL to latest code zip for .update command
-
+    
     // Sticker Configuration
     packname: 'Dex-mini-bot',
-
+    
     // Bot Behavior
     selfMode: false, // Private mode - only owner can use commands
     autoRead: false,
@@ -29,9 +32,12 @@ module.exports = {
     autoBio: false,
     autoSticker: false,
     autoReact: false,
-    autoReactMode: 'bot', // set bot or all via cmd
+    autoReactMode: 'target', // target, bot, or all
+    autoReactTarget: process.env.AUTOREACT_TARGET || '', // one number; digits with country code
+    autoReactEmojiMode: 'random', // random or fixed
+    autoReactFixedEmoji: '❤️',
     autoDownload: false,
-
+    
     // Group Settings Defaults
     defaultGroupSettings: {
       antilink: false,
@@ -55,7 +61,7 @@ module.exports = {
       chatbot: false,
       autosticker: false // Auto-convert images/videos to stickers
     },
-
+    
     // API Keys (add your own)
     apiKeys: {
       // Add API keys here if needed
@@ -63,7 +69,7 @@ module.exports = {
       deepai: '',
       remove_bg: ''
     },
-
+    
     // Message Configuration
     messages: {
       wait: '⏳ Please wait...',
@@ -76,13 +82,13 @@ module.exports = {
       botAdminNeeded: '🤖 Bot needs to be admin to execute this command!',
       invalidCommand: '❓ Invalid command! Type .menu for help'
     },
-
+    
     // Timezone
     timezone: 'Asia/Kolkata',
-
+    
     // Limits
     maxWarnings: 3,
-
+    
     // Social Links (optional)
     social: {
       github: 'https://github.com/Dexsam07',
@@ -90,3 +96,4 @@ module.exports = {
       youtube: 'http://youtube.com/@Dex_shyam_07'
     }
 };
+  

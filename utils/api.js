@@ -24,7 +24,7 @@ const APIs = {
       throw new Error('Failed to generate image');
     }
   },
-
+  
   // AI Chat - Shizo API
   chatAI: async (text) => {
     try {
@@ -37,7 +37,7 @@ const APIs = {
       throw new Error('Failed to get AI response');
     }
   },
-
+  
   // YouTube Download
   ytDownload: async (url, type = 'audio') => {
     try {
@@ -49,7 +49,7 @@ const APIs = {
       throw new Error('Failed to download YouTube video');
     }
   },
-
+  
   // Instagram Download
   igDownload: async (url) => {
     try {
@@ -61,7 +61,7 @@ const APIs = {
       throw new Error('Failed to download Instagram content');
     }
   },
-
+  
   // TikTok Download
   tiktokDownload: async (url) => {
     try {
@@ -73,7 +73,7 @@ const APIs = {
       throw new Error('Failed to download TikTok video');
     }
   },
-
+  
   // Translate
   translate: async (text, to = 'en') => {
     try {
@@ -85,7 +85,7 @@ const APIs = {
       throw new Error('Translation failed');
     }
   },
-
+  
   // Random Meme
   getMeme: async () => {
     try {
@@ -95,7 +95,7 @@ const APIs = {
       throw new Error('Failed to fetch meme');
     }
   },
-
+  
   // Random Quote
   getQuote: async () => {
     try {
@@ -105,7 +105,7 @@ const APIs = {
       throw new Error('Failed to fetch quote');
     }
   },
-
+  
   // Random Joke
   getJoke: async () => {
     try {
@@ -115,7 +115,7 @@ const APIs = {
       throw new Error('Failed to fetch joke');
     }
   },
-
+  
   // Weather
   getWeather: async (city) => {
     try {
@@ -127,7 +127,7 @@ const APIs = {
       throw new Error('Failed to fetch weather');
     }
   },
-
+  
   // Shorten URL
   shortenUrl: async (url) => {
     try {
@@ -139,7 +139,7 @@ const APIs = {
       throw new Error('Failed to shorten URL');
     }
   },
-
+  
   // Wikipedia Search
   wikiSearch: async (query) => {
     try {
@@ -148,6 +148,49 @@ const APIs = {
     } catch (error) {
       throw new Error('Wikipedia search failed');
     }
+  },
+  
+  // Adeel-Xtech fast YouTube download APIs
+  getAdeelAudioByUrl: async (youtubeUrl) => {
+    const response = await axios.get(
+      `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(youtubeUrl)}`,
+      {
+        timeout: 45000,
+        headers: { 'User-Agent': 'AS-ZARA-Mini-Bot/1.0', Accept: 'application/json' },
+        validateStatus: status => status >= 200 && status < 500
+      }
+    );
+    const result = response.data?.result || {};
+    const download = result.audio_download || result.download || result.url;
+    if (response.status >= 400 || response.data?.status === false || !download) {
+      throw new Error(`Adeel-Xtech ytmp3 failed (HTTP ${response.status})`);
+    }
+    return {
+      download,
+      title: result.title || 'YouTube audio',
+      thumbnail: result.thumbnail || result.thumb
+    };
+  },
+
+  getAdeelVideoByUrl: async (youtubeUrl) => {
+    const response = await axios.get(
+      `https://adeel-xtech-apis.vercel.app/api/ytmp4?url=${encodeURIComponent(youtubeUrl)}`,
+      {
+        timeout: 45000,
+        headers: { 'User-Agent': 'AS-ZARA-Mini-Bot/1.0', Accept: 'application/json' },
+        validateStatus: status => status >= 200 && status < 500
+      }
+    );
+    const result = response.data?.result || {};
+    const download = result.video_download || result.video || result.download || result.url;
+    if (response.status >= 400 || response.data?.status === false || !download) {
+      throw new Error(`Adeel-Xtech ytmp4 failed (HTTP ${response.status})`);
+    }
+    return {
+      download,
+      title: result.title || 'YouTube video',
+      thumbnail: result.thumbnail || result.thumb
+    };
   },
 
   // Song Download APIs
@@ -159,7 +202,7 @@ const APIs = {
         'Accept': 'application/json, text/plain, */*'
       }
     };
-
+    
     const tryRequest = async (getter, attempts = 3) => {
       let lastError;
       for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -174,13 +217,13 @@ const APIs = {
       }
       throw lastError;
     };
-
+    
     const apiUrl = `https://izumiiiiiiii.dpdns.org/downloader/youtube?url=${encodeURIComponent(youtubeUrl)}&format=mp3`;
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
     if (res?.data?.result?.download) return res.data.result;
     throw new Error('Izumi youtube?url returned no download');
   },
-
+  
   getIzumiDownloadByQuery: async (query) => {
     const AXIOS_DEFAULTS = {
       timeout: 60000,
@@ -189,7 +232,7 @@ const APIs = {
         'Accept': 'application/json, text/plain, */*'
       }
     };
-
+    
     const tryRequest = async (getter, attempts = 3) => {
       let lastError;
       for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -204,13 +247,13 @@ const APIs = {
       }
       throw lastError;
     };
-
+    
     const apiUrl = `https://izumiiiiiiii.dpdns.org/downloader/youtube-play?query=${encodeURIComponent(query)}`;
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
     if (res?.data?.result?.download) return res.data.result;
     throw new Error('Izumi youtube-play returned no download');
   },
-
+  
   getYupraDownloadByUrl: async (youtubeUrl) => {
     const AXIOS_DEFAULTS = {
       timeout: 60000,
@@ -219,7 +262,7 @@ const APIs = {
         'Accept': 'application/json, text/plain, */*'
       }
     };
-
+    
     const tryRequest = async (getter, attempts = 3) => {
       let lastError;
       for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -234,7 +277,7 @@ const APIs = {
       }
       throw lastError;
     };
-
+    
     const apiUrl = `https://api.yupra.my.id/api/downloader/ytmp3?url=${encodeURIComponent(youtubeUrl)}`;
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
     if (res?.data?.success && res?.data?.data?.download_url) {
@@ -246,7 +289,7 @@ const APIs = {
     }
     throw new Error('Yupra returned no download');
   },
-
+  
   getOkatsuDownloadByUrl: async (youtubeUrl) => {
     const AXIOS_DEFAULTS = {
       timeout: 60000,
@@ -255,7 +298,7 @@ const APIs = {
         'Accept': 'application/json, text/plain, */*'
       }
     };
-
+    
     const tryRequest = async (getter, attempts = 3) => {
       let lastError;
       for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -270,7 +313,7 @@ const APIs = {
       }
       throw lastError;
     };
-
+    
     const apiUrl = `https://okatsu-rolezapiiz.vercel.app/downloader/ytmp3?url=${encodeURIComponent(youtubeUrl)}`;
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
     if (res?.data?.dl) {
@@ -282,7 +325,7 @@ const APIs = {
     }
     throw new Error('Okatsu ytmp3 returned no download');
   },
-
+  
   getEliteProTechDownloadByUrl: async (youtubeUrl) => {
     const AXIOS_DEFAULTS = {
       timeout: 60000,
@@ -291,7 +334,7 @@ const APIs = {
         'Accept': 'application/json, text/plain, */*'
       }
     };
-
+    
     const tryRequest = async (getter, attempts = 3) => {
       let lastError;
       for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -306,7 +349,7 @@ const APIs = {
       }
       throw lastError;
     };
-
+    
     const apiUrl = `https://eliteprotech-apis.zone.id/ytdown?url=${encodeURIComponent(youtubeUrl)}&format=mp3`;
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
     if (res?.data?.success && res?.data?.downloadURL) {
@@ -317,7 +360,7 @@ const APIs = {
     }
     throw new Error('EliteProTech ytdown returned no download');
   },
-
+  
     getEliteProTechVideoByUrl: async (youtubeUrl) => {
     const AXIOS_DEFAULTS = {
       timeout: 60000,
@@ -326,7 +369,7 @@ const APIs = {
         'Accept': 'application/json, text/plain, */*'
       }
     };
-
+    
     const tryRequest = async (getter, attempts = 3) => {
       let lastError;
       for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -341,7 +384,7 @@ const APIs = {
       }
       throw lastError;
     };
-
+    
     const apiUrl = `https://eliteprotech-apis.zone.id/ytdown?url=${encodeURIComponent(youtubeUrl)}&format=mp4`;
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
     if (res?.data?.success && res?.data?.downloadURL) {
@@ -352,7 +395,7 @@ const APIs = {
     }
     throw new Error('EliteProTech ytdown video returned no download');
   },
-
+  
   // Video Download APIs
   getYupraVideoByUrl: async (youtubeUrl) => {
     const AXIOS_DEFAULTS = {
@@ -362,7 +405,7 @@ const APIs = {
         'Accept': 'application/json, text/plain, */*'
       }
     };
-
+    
     const tryRequest = async (getter, attempts = 3) => {
       let lastError;
       for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -377,7 +420,7 @@ const APIs = {
       }
       throw lastError;
     };
-
+    
     const apiUrl = `https://api.yupra.my.id/api/downloader/ytmp4?url=${encodeURIComponent(youtubeUrl)}`;
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
     if (res?.data?.success && res?.data?.data?.download_url) {
@@ -389,7 +432,7 @@ const APIs = {
     }
     throw new Error('Yupra returned no download');
   },
-
+  
   getOkatsuVideoByUrl: async (youtubeUrl) => {
     const AXIOS_DEFAULTS = {
       timeout: 60000,
@@ -398,7 +441,7 @@ const APIs = {
         'Accept': 'application/json, text/plain, */*'
       }
     };
-
+    
     const tryRequest = async (getter, attempts = 3) => {
       let lastError;
       for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -413,7 +456,7 @@ const APIs = {
       }
       throw lastError;
     };
-
+    
     const apiUrl = `https://okatsu-rolezapiiz.vercel.app/downloader/ytmp4?url=${encodeURIComponent(youtubeUrl)}`;
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
     if (res?.data?.result?.mp4) {
@@ -421,23 +464,23 @@ const APIs = {
     }
     throw new Error('Okatsu ytmp4 returned no mp4');
   },
-
+  
   // TikTok Download API
   getTikTokDownload: async (url) => {
     const apiUrl = `https://api.siputzx.my.id/api/d/tiktok?url=${encodeURIComponent(url)}`;
     try {
-      const response = await axios.get(apiUrl, {
+      const response = await axios.get(apiUrl, { 
         timeout: 15000,
         headers: {
           'accept': '*/*',
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
       });
-
+      
       if (response.data && response.data.status && response.data.data) {
         let videoUrl = null;
         let title = null;
-
+        
         if (response.data.data.urls && Array.isArray(response.data.data.urls) && response.data.data.urls.length > 0) {
           videoUrl = response.data.data.urls[0];
           title = response.data.data.metadata?.title || 'TikTok Video';
@@ -451,7 +494,7 @@ const APIs = {
           videoUrl = response.data.data.download_url;
           title = response.data.data.metadata?.title || 'TikTok Video';
         }
-
+        
         return { videoUrl, title };
       }
       throw new Error('Invalid API response');
@@ -459,7 +502,7 @@ const APIs = {
       throw new Error('TikTok download failed');
     }
   },
-
+  
   // Screenshot Website API
   screenshotWebsite: async (url) => {
     try {
@@ -472,12 +515,12 @@ const APIs = {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
       });
-
+      
       // Return the image buffer directly (API returns PNG binary)
       if (response.headers['content-type']?.includes('image')) {
         return Buffer.from(response.data);
       }
-
+      
       // If API returns JSON with URL, try to parse it
       try {
         const data = JSON.parse(Buffer.from(response.data).toString());
@@ -490,7 +533,7 @@ const APIs = {
       throw new Error('Failed to take screenshot');
     }
   },
-
+  
   // Text to Speech API
   textToSpeech: async (text) => {
     try {
@@ -502,13 +545,13 @@ const APIs = {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
       });
-
+      
       if (response.data) {
         // Check if response.data is a string (direct URL)
         if (typeof response.data === 'string' && (response.data.startsWith('http://') || response.data.startsWith('https://'))) {
           return response.data;
         }
-
+        
         // Check nested data structure
         if (response.data.data) {
           const data = response.data.data;
@@ -517,14 +560,14 @@ const APIs = {
           if (data.MP3) return `https://ttsmp3.com/created_mp3_ai/${data.MP3}`;
           if (data.mp3) return `https://ttsmp3.com/created_mp3_ai/${data.mp3}`;
         }
-
+        
         // Check top-level URL fields
         if (response.data.URL) return response.data.URL;
         if (response.data.url) return response.data.url;
         if (response.data.MP3) return `https://ttsmp3.com/created_mp3_ai/${response.data.MP3}`;
         if (response.data.mp3) return `https://ttsmp3.com/created_mp3_ai/${response.data.mp3}`;
       }
-
+      
       throw new Error('Invalid API response structure');
     } catch (error) {
       throw new Error(`Failed to generate speech: ${error.message}`);

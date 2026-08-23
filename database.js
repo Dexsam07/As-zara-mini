@@ -102,17 +102,17 @@ const getWarnings = (groupId, userId) => {
 const addWarning = (groupId, userId, reason) => {
   const warnings = readDB(WARNINGS_DB);
   const key = `${groupId}_${userId}`;
-
+  
   if (!warnings[key]) {
     warnings[key] = { count: 0, warnings: [] };
   }
-
+  
   warnings[key].count++;
   warnings[key].warnings.push({
     reason,
     date: Date.now()
   });
-
+  
   writeDB(WARNINGS_DB, warnings);
   return warnings[key];
 };
@@ -120,7 +120,7 @@ const addWarning = (groupId, userId, reason) => {
 const removeWarning = (groupId, userId) => {
   const warnings = readDB(WARNINGS_DB);
   const key = `${groupId}_${userId}`;
-
+  
   if (warnings[key] && warnings[key].count > 0) {
     warnings[key].count--;
     warnings[key].warnings.pop();

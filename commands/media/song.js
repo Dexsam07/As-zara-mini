@@ -62,6 +62,7 @@ module.exports = {
       
       // List of API methods to try
       const apiMethods = [
+        { name: 'Adeel-Xtech', method: () => APIs.getAdeelAudioByUrl(video.url) },
         { name: 'EliteProTech', method: () => APIs.getEliteProTechDownloadByUrl(video.url) },
         { name: 'Yupra', method: () => APIs.getYupraDownloadByUrl(video.url) },
         { name: 'Okatsu', method: () => APIs.getOkatsuDownloadByUrl(video.url) },

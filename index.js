@@ -67,6 +67,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { restoreSessionId } = require('./utils/sessionManager');
+const { notifyConnectedOnce } = require('./utils/connectionNotifier');
 
 // Remove Puppeteer cache (if some dependency downloaded Chromium into ~/.cache/puppeteer)
 function cleanupPuppeteerCache() {
@@ -335,6 +336,14 @@ async function startBot() {
       const ownerNames = Array.isArray(config.ownerName) ? config.ownerName.join(',') : config.ownerName;
       console.log(`👑 Owner: ${ownerNames}\n`);
       console.log('Bot is ready to receive messages!\n');
+
+      // Notify the connected WhatsApp number once per bot identity.
+      try {
+        const notification = await notifyConnectedOnce(sock, config);
+        if (notification.sent) console.log('📨 Connection notification sent to the bot number.');
+      } catch (error) {
+        console.error('📨 Connection notification failed:', error.message || error);
+      }
 
       // Set bot status
       if (config.autoBio) {

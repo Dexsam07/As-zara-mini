@@ -11,12 +11,12 @@ module.exports = {
   category: 'general',
   description: 'Show all available commands',
   usage: '.menu',
-
+  
   async execute(sock, msg, args, extra) {
     try {
       const commands = loadCommands();
       const categories = {};
-
+      
       // Group commands by category
       commands.forEach((cmd, name) => {
         if (cmd.name === name) { // Only count main command names, not aliases
@@ -26,10 +26,10 @@ module.exports = {
           categories[cmd.category].push(cmd);
         }
       });
-
+      
       const ownerNames = Array.isArray(config.ownerName) ? config.ownerName : [config.ownerName];
       const displayOwner = ownerNames[0] || config.ownerName || 'Bot Owner';
-
+      
       let menuText = `╭━━『 *${config.botName}* 』━━╮\n\n`;
       const senderNumber = String(extra.sender || '').split('@')[0] || 'user';
       menuText += `👋 welcome AS-ZARA-MINI @${senderNumber}!\n\n`;
@@ -38,7 +38,7 @@ module.exports = {
       commands.forEach(command => mainCommandNames.add(command.name));
       menuText += `📦 Total Commands: ${mainCommandNames.size}\n`;
       menuText += `👑 Owner: ${displayOwner}\n\n`;
-
+      
       // General Commands
       if (categories.general) {
         menuText += `┏━━━━━━━━━━━━━━━━━\n`;
@@ -49,7 +49,7 @@ module.exports = {
         });
         menuText += `\n`;
       }
-
+      
       // AI Commands
       if (categories.ai) {
         menuText += `┏━━━━━━━━━━━━━━━━━\n`;
@@ -60,7 +60,7 @@ module.exports = {
         });
         menuText += `\n`;
       }
-
+      
       // Group Commands
       if (categories.group) {
         menuText += `┏━━━━━━━━━━━━━━━━━\n`;
@@ -71,7 +71,7 @@ module.exports = {
         });
         menuText += `\n`;
       }
-
+      
       // Admin Commands
       if (categories.admin) {
         menuText += `┏━━━━━━━━━━━━━━━━━\n`;
@@ -82,7 +82,7 @@ module.exports = {
         });
         menuText += `\n`;
       }
-
+      
       // Owner Commands
       if (categories.owner) {
         menuText += `┏━━━━━━━━━━━━━━━━━\n`;
@@ -93,7 +93,7 @@ module.exports = {
         });
         menuText += `\n`;
       }
-
+      
       // Media Commands
       if (categories.media) {
         menuText += `┏━━━━━━━━━━━━━━━━━\n`;
@@ -104,7 +104,7 @@ module.exports = {
         });
         menuText += `\n`;
       }
-
+      
       // Fun Commands
       if (categories.fun) {
         menuText += `┏━━━━━━━━━━━━━━━━━\n`;
@@ -115,7 +115,7 @@ module.exports = {
         });
         menuText += `\n`;
       }
-
+      
       // Utility Commands
       if (categories.utility) {
         menuText += `┏━━━━━━━━━━━━━━━━━\n`;
@@ -148,16 +148,16 @@ module.exports = {
         });
         menuText += `\n`;
       }
-
+      
       menuText += `╰━━━━━━━━━━━━━━━━━\n\n`;
       menuText += `💡 Type ${config.prefix}help <command> for more info\n`;
       menuText += `🌟 As-zara-mini Version: 1.0.0\n`;
-
+      
       // Send menu with image
       const fs = require('fs');
       const path = require('path');
       const imagePath = path.join(__dirname, '../../utils/bot_image.jpg');
-
+      
       if (fs.existsSync(imagePath)) {
         // Send image with newsletter forwarding context
         const imageBuffer = fs.readFileSync(imagePath);
@@ -181,7 +181,7 @@ module.exports = {
           mentions: [extra.sender]
         }, { quoted: msg });
       }
-
+      
     } catch (error) {
       await extra.reply(`❌ Error: ${error.message}`);
     }
