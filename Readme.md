@@ -56,13 +56,13 @@ Deploy a small helper to generate a **pair code** and obtain your session string
 After scanning, you will receive a **session string** starting with:
 
 ```text
-DEX~H4....
+DEX~....
 ```
 
 Copy that full string and paste it into `config.js`:
 
 ```js
-sessionID: 'DEX~H4.....'
+sessionID: 'DEX~.....'
 ```
 
 Or set it via the `SESSION_ID` environment variable when hosting.
