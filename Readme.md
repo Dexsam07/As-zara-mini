@@ -111,7 +111,7 @@ Edit `config.js`:
 - **Option A: Use session string**
 
   ```js
-  sessionID: 'DEX~H4.....'
+  sessionID: 'DEX~.....'
   ```
 
 - **Option B: Scan QR**
@@ -216,7 +216,7 @@ You must:
 
 ## 📜 Copyright Notice
 
-Copyright (c) **2026 DEX**.  
+Copyright (c) **2026 DEX SHAYAM TECH**.  
 All rights reserved.
 
 This project contains code from various open‑source projects and AI tools, including but not limited to:
