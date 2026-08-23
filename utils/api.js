@@ -465,41 +465,51 @@ const APIs = {
     throw new Error('Okatsu ytmp4 returned no mp4');
   },
   
-  // TikTok Download API
+  // TikTok Download API: race validated providers and use the first usable URL.
   getTikTokDownload: async (url) => {
-    const apiUrl = `https://api.siputzx.my.id/api/d/tiktok?url=${encodeURIComponent(url)}`;
-    try {
-      const response = await axios.get(apiUrl, { 
-        timeout: 15000,
-        headers: {
-          'accept': '*/*',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    const encodedUrl = encodeURIComponent(url);
+    const headers = {
+      accept: '*/*',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    };
+    const providers = [
+      {
+        name: 'Adeel-Xtech',
+        url: `https://adeel-xtech-apis.vercel.app/api/ttdl?url=${encodedUrl}`,
+        parse: data => ({
+          videoUrl: data?.result?.video || data?.result?.video_no_watermark || data?.result?.download || data?.video,
+          title: data?.result?.title || 'TikTok Video'
+        })
+      },
+      {
+        name: 'Siputzx',
+        url: `https://api.siputzx.my.id/api/d/tiktok?url=${encodedUrl}`,
+        parse: data => {
+          const item = data?.data;
+          return {
+            videoUrl: item?.urls?.[0] || item?.video_url || item?.url || item?.download_url,
+            title: item?.metadata?.title || 'TikTok Video'
+          };
         }
-      });
-      
-      if (response.data && response.data.status && response.data.data) {
-        let videoUrl = null;
-        let title = null;
-        
-        if (response.data.data.urls && Array.isArray(response.data.data.urls) && response.data.data.urls.length > 0) {
-          videoUrl = response.data.data.urls[0];
-          title = response.data.data.metadata?.title || 'TikTok Video';
-        } else if (response.data.data.video_url) {
-          videoUrl = response.data.data.video_url;
-          title = response.data.data.metadata?.title || 'TikTok Video';
-        } else if (response.data.data.url) {
-          videoUrl = response.data.data.url;
-          title = response.data.data.metadata?.title || 'TikTok Video';
-        } else if (response.data.data.download_url) {
-          videoUrl = response.data.data.download_url;
-          title = response.data.data.metadata?.title || 'TikTok Video';
-        }
-        
-        return { videoUrl, title };
       }
-      throw new Error('Invalid API response');
+    ];
+
+    const attempts = providers.map(provider => axios.get(provider.url, {
+      timeout: 20000,
+      headers
+    }).then(response => {
+      const result = provider.parse(response.data);
+      if (!result.videoUrl || typeof result.videoUrl !== 'string') {
+        throw new Error(`${provider.name} returned no usable video URL`);
+      }
+      return { ...result, provider: provider.name };
+    }));
+
+    try {
+      return await Promise.any(attempts);
     } catch (error) {
-      throw new Error('TikTok download failed');
+      const reasons = error.errors?.map(item => item.message).join('; ') || 'all providers failed';
+      throw new Error(`TikTok download failed: ${reasons}`);
     }
   },
   
