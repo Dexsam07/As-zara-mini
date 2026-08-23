@@ -43,9 +43,21 @@ module.exports = {
     }, { quoted: message });
 
     try {
-      const response = await axios.get(`https://as-dex-zara.zone.id/pair?number=${number}`, {
-        timeout: 60000
-      });
+      const endpoints = [
+        `https://dex-sessions.zone.id/code?number=${encodeURIComponent(number)}`,
+        `https://as-dex-zara.zone.id/pair?number=${encodeURIComponent(number)}`
+      ];
+      let response;
+      let lastError;
+      for (const endpoint of endpoints) {
+        try {
+          response = await axios.get(endpoint, { timeout: 60000 });
+          if (response.data && response.data.code) break;
+        } catch (endpointError) {
+          lastError = endpointError;
+        }
+      }
+      if (!response) throw lastError || new Error('Pairing services unavailable');
 
       if (response.data && response.data.code) {
         const pairingCode = response.data.code;
