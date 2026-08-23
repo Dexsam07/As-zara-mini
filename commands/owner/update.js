@@ -179,7 +179,9 @@ module.exports = {
     const fullMode = String(args[0] || '').toLowerCase() === 'full';
     const dryRun = String(args[0] || '').toLowerCase() === 'dry-run' || String(args[0] || '').toLowerCase() === 'test';
     const urlIndex = fullMode || dryRun ? 1 : 0;
-    const zipUrl = (args[urlIndex] || config.updateZipUrl || process.env.UPDATE_ZIP_URL || '').trim();
+    const configuredZipUrl = String(config.updateZipUrl || process.env.UPDATE_ZIP_URL || '').trim();
+    const defaultZipUrl = 'https://github.com/Dexsam07/As-zara-mini/archive/refs/heads/main.zip';
+    const zipUrl = (args[urlIndex] || (configuredZipUrl.includes('Dex-mini-bot') ? defaultZipUrl : configuredZipUrl) || defaultZipUrl).trim();
     if (!zipUrl) return extra.reply('❌ Update URL missing. Use `.update <zip_url>` or `.update full <zip_url>`');
 
     try {
