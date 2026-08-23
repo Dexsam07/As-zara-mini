@@ -2,9 +2,9 @@
  * Facebook Downloader - Download Facebook videos
  */
 
-const { facebookdl } = require('@bochilteam/scraper-facebook');
 const axios = require('axios');
 const config = require('../../config');
+const { getFacebookDownload } = require('../../utils/socialDownload');
 
 // Store processed message IDs to prevent duplicates
 const processedMessages = new Set();
@@ -66,8 +66,8 @@ module.exports = {
       });
       
       try {
-        // Use @bochilteam/scraper-facebook
-        const data = await facebookdl(url);
+        // Race Siputzx and Bochil providers; use the first valid video result.
+        const data = await getFacebookDownload(url);
         
         if (!data || !data.video || !Array.isArray(data.video) || data.video.length === 0) {
           throw new Error('No video data found');

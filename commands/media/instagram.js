@@ -2,8 +2,8 @@
  * Instagram Downloader - Using ruhend-scraper
  */
 
-const { igdl } = require('ruhend-scraper');
 const config = require('../../config');
+const { getInstagramDownload } = require('../../utils/socialDownload');
 
 // Store processed message IDs to prevent duplicates
 const processedMessages = new Set();
@@ -87,7 +87,7 @@ module.exports = {
         react: { text: '📥', key: msg.key }
       });
       
-      const downloadData = await igdl(text);
+      const downloadData = await getInstagramDownload(text);
       
       if (!downloadData || !downloadData.data || downloadData.data.length === 0) {
         return extra.reply('❌ No media found at the provided link. The post might be private or the link is invalid.');
