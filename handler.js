@@ -16,7 +16,13 @@ const groupMetadataCache = new Map();
 const CACHE_TTL = 60000; // 1 minute cache
 
 // Load all commands
-const commands = loadCommands();
+let commands = loadCommands();
+
+// Reload command modules after an additive update without restarting WhatsApp.
+const reloadCommands = () => {
+  commands = loadCommands();
+  return commands;
+};
 
 // Unwrap WhatsApp containers (ephemeral, view once, etc.)
 const getMessageContent = (msg) => {
@@ -1281,6 +1287,7 @@ module.exports = {
   handleAntilink,
   handleAntigroupmention,
   initializeAntiCall,
+  reloadCommands,
   isOwner,
   isAdmin,
   isBotAdmin,
