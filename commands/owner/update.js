@@ -88,7 +88,7 @@ async function validateJavaScriptFiles(root) {
   return jsFiles.length;
 }
 
-function copyChangedFiles(src, dest, ignore = [], relative = '', changes = [], backupRoot = '', createdFiles = [], allowed = null) {
+function copyChangedFiles(src, dest, ignore = [], relative = '', changes = [], backupRoot = '', createdFiles = [], allowed = null, dryRun = false) {
   if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src)) {
     if (ignore.includes(entry)) continue;
@@ -98,13 +98,17 @@ function copyChangedFiles(src, dest, ignore = [], relative = '', changes = [], b
     if (allowed && !allowed(relativePath)) continue;
     const stat = fs.lstatSync(sourcePath);
     if (stat.isDirectory()) {
-      copyChangedFiles(sourcePath, destinationPath, ignore, path.join(relative, entry), changes, backupRoot, createdFiles, allowed);
+      copyChangedFiles(sourcePath, destinationPath, ignore, path.join(relative, entry), changes, backupRoot, createdFiles, allowed, dryRun);
       continue;
     }
     const sourceBuffer = fs.readFileSync(sourcePath);
     const existing = fs.existsSync(destinationPath) ? fs.readFileSync(destinationPath) : null;
     if (existing && Buffer.compare(sourceBuffer, existing) === 0) continue;
     if (!existing) createdFiles.push(relativePath);
+    if (dryRun) {
+      changes.push(relativePath);
+      continue;
+    }
     if (existing && backupRoot) {
       const backupPath = path.join(backupRoot, relativePath);
       fs.mkdirSync(path.dirname(backupPath), { recursive: true });
@@ -129,7 +133,7 @@ function restoreBackup(backupRoot, cwd, createdFiles = []) {
   }
 }
 
-async function updateViaZip(zipUrl, { hotOnly = true } = {}) {
+async function updateViaZip(zipUrl, { hotOnly = true, dryRun = false } = {}) {
   const tmpDir = path.join(process.cwd(), 'tmp');
   const zipPath = path.join(tmpDir, `update-${Date.now()}.zip`);
   const extractTo = path.join(tmpDir, `update-extract-${Date.now()}`);
@@ -146,7 +150,7 @@ async function updateViaZip(zipUrl, { hotOnly = true } = {}) {
     const ignore = ['node_modules', '.git', 'session', 'tmp', 'temp', 'database', 'config.js'];
     const changedFiles = [];
     const allowed = hotOnly ? relativePath => relativePath === 'commands' || relativePath.startsWith('commands/') : null;
-    copyChangedFiles(srcRoot, process.cwd(), ignore, '', changedFiles, backupRoot, createdFiles, allowed);
+    copyChangedFiles(srcRoot, process.cwd(), ignore, '', changedFiles, backupRoot, createdFiles, allowed, dryRun);
     return { changedFiles, createdFiles, validatedJavaScriptFiles, backupRoot };
   } catch (error) {
     restoreBackup(backupRoot, process.cwd(), createdFiles);
@@ -167,19 +171,26 @@ module.exports = {
   aliases: ['upgrade'],
   category: 'owner',
   description: 'Safely hot-update commands or controlled-restart core files',
-  usage: '.update <zip_url> | .update full <zip_url>',
+  usage: '.update <zip_url> | .update dry-run <zip_url> | .update full <zip_url>',
   ownerOnly: true,
 
   async execute(sock, msg, args, extra) {
     const chatId = msg.key.remoteJid;
     const fullMode = String(args[0] || '').toLowerCase() === 'full';
-    const zipUrl = (args[fullMode ? 1 : 0] || config.updateZipUrl || process.env.UPDATE_ZIP_URL || '').trim();
+    const dryRun = String(args[0] || '').toLowerCase() === 'dry-run' || String(args[0] || '').toLowerCase() === 'test';
+    const urlIndex = fullMode || dryRun ? 1 : 0;
+    const zipUrl = (args[urlIndex] || config.updateZipUrl || process.env.UPDATE_ZIP_URL || '').trim();
     if (!zipUrl) return extra.reply('❌ Update URL missing. Use `.update <zip_url>` or `.update full <zip_url>`');
 
     try {
       await extra.reply('🔄 Safe update started. Bot online rahega; maximum time: 60 seconds.');
-      const result = await withTimeout(updateViaZip(zipUrl, { hotOnly: !fullMode }), UPDATE_TIMEOUT_MS, 'update');
+      const result = await withTimeout(updateViaZip(zipUrl, { hotOnly: !fullMode, dryRun }), UPDATE_TIMEOUT_MS, 'update');
       const restart = requiresRestart(result.changedFiles, fullMode);
+
+      if (dryRun) {
+        try { fs.rmSync(result.backupRoot, { recursive: true, force: true }); } catch {}
+        return extra.reply(`✅ Dry-run complete. Koi file change nahi ki gayi aur bot restart nahi hua.\n📁 Planned files: ${result.changedFiles.length}\n🧩 JavaScript files validated: ${result.validatedJavaScriptFiles}\n${result.changedFiles.length ? result.changedFiles.slice(0, 30).map(file => `• ${file}`).join('\n') : 'No command changes detected.'}`);
+      }
 
       if (!restart) {
         let reloaded = 0;
