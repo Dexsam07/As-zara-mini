@@ -223,4 +223,3 @@ This project contains code from various open‑source projects and AI tools, inc
 
 - **Baileys** – MIT License  
 - Other libraries as listed in `package.json`
-
