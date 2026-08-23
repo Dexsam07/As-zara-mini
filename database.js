@@ -40,12 +40,17 @@ const readDB = (filePath) => {
   }
 };
 
-// Write database
+// Write database atomically. A temporary file is fully written and then
+// renamed, so a crash cannot leave a half-written JSON document behind.
 const writeDB = (filePath, data) => {
+  const tempPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
   try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    const serialized = JSON.stringify(data, null, 2);
+    fs.writeFileSync(tempPath, serialized, { encoding: 'utf8', mode: 0o600 });
+    fs.renameSync(tempPath, filePath);
     return true;
   } catch (error) {
+    try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (_) {}
     console.error(`Error writing database: ${error.message}`);
     return false;
   }
@@ -97,17 +102,17 @@ const getWarnings = (groupId, userId) => {
 const addWarning = (groupId, userId, reason) => {
   const warnings = readDB(WARNINGS_DB);
   const key = `${groupId}_${userId}`;
-  
+
   if (!warnings[key]) {
     warnings[key] = { count: 0, warnings: [] };
   }
-  
+
   warnings[key].count++;
   warnings[key].warnings.push({
     reason,
     date: Date.now()
   });
-  
+
   writeDB(WARNINGS_DB, warnings);
   return warnings[key];
 };
@@ -115,7 +120,7 @@ const addWarning = (groupId, userId, reason) => {
 const removeWarning = (groupId, userId) => {
   const warnings = readDB(WARNINGS_DB);
   const key = `${groupId}_${userId}`;
-  
+
   if (warnings[key] && warnings[key].count > 0) {
     warnings[key].count--;
     warnings[key].warnings.pop();

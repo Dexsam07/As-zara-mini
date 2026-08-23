@@ -1,75 +1,54 @@
-const autoEmojis = [
-  '💘','💝','💖','💗','💓','💞','💕','💟','❣️','❤️',
-  '🧡','💛','💚','💙','💜','🤎','🖤','🤍','♥️',
-  '🎈','🎁','💌','💐','😘','🤗',
-  '🌸','🌹','🥀','🌺','🌼','🌷',
-  '🍁','⭐️','🌟','😊','🥰','😍',
-  '🤩','☺️'
-];
+/**
+ * Auto-React Command - Configure automatic reactions
+ */
 
-let AUTO_REACT_MESSAGES = false;
-let lastReactedTime = 0;
-
-function random(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+const { load, save } = require('../../utils/autoReact');
 
 module.exports = {
-  command: 'autoreact',
-  aliases: ['areact'],
+  name: 'autoreact',
+  aliases: ['ar'],
   category: 'owner',
-  description: 'Toggle auto-react to messages',
-  usage: '.autoreact on/off',
+  description: 'Configure automatic reactions to messages',
+  usage: '.autoreact <on/off/set bot/set all>',
   ownerOnly: true,
-  
-  async handler(sock, message, args, context) {
-    const { chatId } = context;  // context se sirf chatId li
-    if (!args[0] || !['on', 'off'].includes(args[0])) {
-      await sock.sendMessage(chatId, {
-        text: '*Usage:*\n.autoreact on/off'
-      }, { quoted: message });
-      return;
-    }
 
-    AUTO_REACT_MESSAGES = args[0] === 'on';
-
-    await sock.sendMessage(chatId, {
-      text: AUTO_REACT_MESSAGES ? '*✅ Auto-react enabled*' : '*❌ Auto-react disabled*'
-    }, { quoted: message });
-
-    // Event listener sirf ek baar attach karo
-    if (sock.__autoReactAttached) return;
-
-    sock.ev.on('messages.upsert', async ({ messages }) => {
-      if (!AUTO_REACT_MESSAGES) return;
-
-      for (const m of messages) {
-        if (!m?.message) continue;
-        if (m.key.fromMe) continue; // apne messages ko ignore karo
-
-        const text =
-          m.message.conversation ||
-          m.message.extendedTextMessage?.text ||
-          '';
-
-        if (!text) continue;
-        // Command prefix se shuru hone wale messages ko skip
-        if (/^[!#.$%^&*+=?<>]/.test(text)) continue;
-
-        const now = Date.now();
-        if (now - lastReactedTime < 2000) continue; // 2 second throttle
-
-        await sock.sendMessage(m.key.remoteJid, {
-          react: {
-            text: random(autoEmojis),
-            key: m.key
-          }
-        });
-
-        lastReactedTime = now;
+  async execute(sock, msg, args, extra) {
+    try {
+      if (!args[0]) {
+        return extra.reply('📋 *Auto-React Options:*\n\n• on - Enable auto-react\n• off - Disable auto-react\n• set bot - React only to bot commands\n• set all - React to all messages');
       }
-    });
 
-    sock.__autoReactAttached = true;
+      const db = load();
+      const opt = args.join(' ').toLowerCase();
+
+      if (opt === 'on') {
+        db.enabled = true;
+        save(db);
+        return extra.reply('✅ Auto-react enabled.');
+      }
+
+      if (opt === 'off') {
+        db.enabled = false;
+        save(db);
+        return extra.reply('❌ Auto-react disabled.');
+      }
+
+      if (opt === 'set bot') {
+        db.mode = 'bot';
+        save(db);
+        return extra.reply('🤖 Auto-react mode: Bot commands only (⏳ reaction)');
+      }
+
+      if (opt === 'set all') {
+        db.mode = 'all';
+        save(db);
+        return extra.reply('🌟 Auto-react mode: All messages (random emojis)');
+      }
+
+      extra.reply('❌ Invalid option. Use: on | off | set bot | set all');
+    } catch (err) {
+      console.error('[autoreact cmd] error:', err);
+      extra.reply('❌ Error configuring auto-react.');
+    }
   }
 };

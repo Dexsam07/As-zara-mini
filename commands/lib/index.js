@@ -1,5 +1,5 @@
-const config = require('../config');
-const database = require('../database');
+const config = require('../../config');
+const database = require('../../database');
 
 function normalize(value) {
   return String(value || '').split('@')[0].split(':')[0].replace(/\D/g, '');

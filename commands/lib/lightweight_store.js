@@ -1,7 +1,7 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-const root = path.join(__dirname, '..', 'database');
+const root = path.join(__dirname, '..', '..', 'database');
 const pending = new Map();
 
 async function readNamespace(namespace) {

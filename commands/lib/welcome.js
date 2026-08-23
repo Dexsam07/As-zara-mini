@@ -1,4 +1,4 @@
-const database = require('../database');
+const database = require('../../database');
 
 async function handleWelcome(sock, chatId, message, input = '') {
   const value = String(input).trim();

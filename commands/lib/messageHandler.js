@@ -1,4 +1,4 @@
-const { handleMessage } = require('../handler');
+const { handleMessage } = require('../../handler');
 
 module.exports = {
   handleMessage,

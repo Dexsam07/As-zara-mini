@@ -6,8 +6,10 @@
     "type": "commonjs",
     "scripts": {
         "start": "node index.js",
-        "dev": "nodemon index.js",
-        "install:no-puppeteer": "PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm install"
+        "dev": "nodemon --signal SIGTERM index.js",
+        "check": "node --check index.js && node --check handler.js && node --check utils/sessionManager.js",
+        "test:smoke": "node test_handler_import.js && node smoke_tests.js && node test_session_manager.js",
+        "install:no-puppeteer": "PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm ci"
     },
     "keywords": [
         "whatsapp bot",
@@ -18,12 +20,15 @@
     ],
     "author": "Dex Shyam Chaudhari",
     "license": "MIT",
+    "engines": {
+        "node": ">=20.0.0"
+    },
     "dependencies": {
         "@bochilteam/scraper": "^5.0.1",
         "@bochilteam/scraper-tiktok": "^5.0.0",
         "@bochilteam/scraper-facebook": "^5.0.0",
         "@vitalets/google-translate-api": "^9.2.1",
-        "@whiskeysockets/baileys": "^v7.0.0-rc.9",
+        "@whiskeysockets/baileys": "7.0.0-rc14",
         "axios": "^1.7.2",
         "canvas": "^3.2.1",
         "cheerio": "^1.0.0-rc.12",
@@ -31,18 +36,20 @@
         "file-type": "^16.5.4",
         "fluent-ffmpeg": "^2.1.3",
         "form-data": "^4.0.0",
-        "gifted-btns": "*",
+        "gifted-btns": "1.0.2",
         "jimp": "^1.6.0",
         "lottie-node": "^2.0.0",
         "lottie-web": "^5.13.0",
         "moment-timezone": "^0.5.45",
         "mumaker": "^2.0.0",
         "node-fetch": "^2.7.0",
+        "node-cache": "^5.1.2",
         "node-webpmux": "^3.1.7",
         "pino": "^9.0.0",
         "qrcode": "^1.5.3",
         "qrcode-terminal": "^0.12.0",
         "ruhend-scraper": "^9.0.8",
+        "simple-git": "^3.27.0",
         "sharp": "^0.33.4",
         "yt-search": "^2.13.1",
         "ytdl-core": "^4.11.5"
