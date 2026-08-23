@@ -88,21 +88,23 @@ async function validateJavaScriptFiles(root) {
   return jsFiles.length;
 }
 
-function copyChangedFiles(src, dest, ignore = [], relative = '', changes = [], backupRoot = '') {
+function copyChangedFiles(src, dest, ignore = [], relative = '', changes = [], backupRoot = '', createdFiles = [], allowed = null) {
   if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src)) {
     if (ignore.includes(entry)) continue;
     const sourcePath = path.join(src, entry);
     const destinationPath = path.join(dest, entry);
     const relativePath = path.join(relative, entry).replace(/\\/g, '/');
+    if (allowed && !allowed(relativePath)) continue;
     const stat = fs.lstatSync(sourcePath);
     if (stat.isDirectory()) {
-      copyChangedFiles(sourcePath, destinationPath, ignore, path.join(relative, entry), changes, backupRoot);
+      copyChangedFiles(sourcePath, destinationPath, ignore, path.join(relative, entry), changes, backupRoot, createdFiles, allowed);
       continue;
     }
     const sourceBuffer = fs.readFileSync(sourcePath);
     const existing = fs.existsSync(destinationPath) ? fs.readFileSync(destinationPath) : null;
     if (existing && Buffer.compare(sourceBuffer, existing) === 0) continue;
+    if (!existing) createdFiles.push(relativePath);
     if (existing && backupRoot) {
       const backupPath = path.join(backupRoot, relativePath);
       fs.mkdirSync(path.dirname(backupPath), { recursive: true });
@@ -114,7 +116,10 @@ function copyChangedFiles(src, dest, ignore = [], relative = '', changes = [], b
   }
 }
 
-function restoreBackup(backupRoot, cwd) {
+function restoreBackup(backupRoot, cwd, createdFiles = []) {
+  for (const relative of createdFiles) {
+    try { fs.rmSync(path.join(cwd, relative), { force: true }); } catch {}
+  }
   if (!fs.existsSync(backupRoot)) return;
   for (const backupFile of walkFiles(backupRoot)) {
     const relative = path.relative(backupRoot, backupFile);
@@ -124,11 +129,12 @@ function restoreBackup(backupRoot, cwd) {
   }
 }
 
-async function updateViaZip(zipUrl) {
+async function updateViaZip(zipUrl, { hotOnly = true } = {}) {
   const tmpDir = path.join(process.cwd(), 'tmp');
   const zipPath = path.join(tmpDir, `update-${Date.now()}.zip`);
   const extractTo = path.join(tmpDir, `update-extract-${Date.now()}`);
   const backupRoot = path.join(tmpDir, `update-backup-${Date.now()}`);
+  const createdFiles = [];
   fs.mkdirSync(tmpDir, { recursive: true });
   try {
     await withTimeout(downloadFile(zipUrl, zipPath), UPDATE_TIMEOUT_MS, 'download');
@@ -139,10 +145,11 @@ async function updateViaZip(zipUrl) {
     const validatedJavaScriptFiles = await validateJavaScriptFiles(srcRoot);
     const ignore = ['node_modules', '.git', 'session', 'tmp', 'temp', 'database', 'config.js'];
     const changedFiles = [];
-    copyChangedFiles(srcRoot, process.cwd(), ignore, '', changedFiles, backupRoot);
-    return { changedFiles, validatedJavaScriptFiles, backupRoot };
+    const allowed = hotOnly ? relativePath => relativePath === 'commands' || relativePath.startsWith('commands/') : null;
+    copyChangedFiles(srcRoot, process.cwd(), ignore, '', changedFiles, backupRoot, createdFiles, allowed);
+    return { changedFiles, createdFiles, validatedJavaScriptFiles, backupRoot };
   } catch (error) {
-    restoreBackup(backupRoot, process.cwd());
+    restoreBackup(backupRoot, process.cwd(), createdFiles);
     throw error;
   } finally {
     try { fs.rmSync(extractTo, { recursive: true, force: true }); } catch {}
@@ -171,7 +178,7 @@ module.exports = {
 
     try {
       await extra.reply('🔄 Safe update started. Bot online rahega; maximum time: 60 seconds.');
-      const result = await withTimeout(updateViaZip(zipUrl), UPDATE_TIMEOUT_MS, 'update');
+      const result = await withTimeout(updateViaZip(zipUrl, { hotOnly: !fullMode }), UPDATE_TIMEOUT_MS, 'update');
       const restart = requiresRestart(result.changedFiles, fullMode);
 
       if (!restart) {
@@ -181,7 +188,7 @@ module.exports = {
           if (typeof handler.reloadCommands === 'function') reloaded = handler.reloadCommands().size;
         } catch (error) {
           console.error('[UPDATE] Command reload failed:', error);
-          restoreBackup(result.backupRoot, process.cwd());
+          restoreBackup(result.backupRoot, process.cwd(), result.createdFiles);
           return extra.reply(`❌ New files copied but command reload failed. Old files restored.\n${error.message}`);
         }
         try { fs.rmSync(result.backupRoot, { recursive: true, force: true }); } catch {}
