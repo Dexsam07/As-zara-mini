@@ -82,7 +82,7 @@ Or set it via the `SESSION_ID` environment variable when hosting.
 For a full step‑by‑step deployment tutorial (panels / VPS / Heroku), add or update your YouTube guide here:
 
 <div align="center">
-  <a href="https://youtu.be/4PQcn-qqrcE">
+  <a href="https://youtu.be/Hmp17yyU9Xc?si=0sMZ9EJiI_gb1r_y">
     <img src="https://img.shields.io/badge/Deploy Tutorial-dc3545?style=for-the-badge&logo=youtube" alt="YouTube Link"/>
   </a>
 </div>
