@@ -19,7 +19,7 @@ module.exports = {
     connectionNotifyEnabled: true,
     developerName: 'Dex Shyam Chaudhari',
     githubUrl: 'https://github.com/Dexsam07/As-zara-mini',
-    newsletterJid: '120363406449026172@newsletter', // Newsletter JID for menu forwarding
+    newsletterJid: '', // Newsletter JID for menu forwarding
     updateZipUrl: 'https://github.com/Dexsam07/As-zara-mini/archive/refs/heads/main.zip', // URL to latest code zip for .update command
     
     // Sticker Configuration
